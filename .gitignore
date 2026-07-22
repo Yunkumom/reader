@@ -48,7 +48,7 @@ id_ed25519*
 .aws/credentials
 .aws/config
 .docker/config.json
-.config/gcloud/application_default_credentials.json
+.config/gcloud/application_defaultcredentials.json
 credentials.json
 credentials.*.json
 secrets.json
@@ -59,13 +59,16 @@ service-account*.json
 service_account*.json
 firebase-adminsdk*.json
 
-# vercel
+# vercel & build outputs
 .vercel
-
-# typescript
-next-env.d.ts
 /dist/
 /.wrangler/
 /.sites-runtime/
 /outputs/
 /work/
+
+# large binary & reference media files (>100MB)
+*.pdf
+*.zip
+*.tar.gz
+*.iso

@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Bilingual Reader v11｜金錢心理學與正向心理學研究 雙語閱讀器</title>
-  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
-  <link rel="manifest" href="./public/manifest.webmanifest">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./manifest.webmanifest">
   <meta name="theme-color" content="#f2ead8">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -249,8 +249,8 @@
     .speechPlayer small { font-size: 11px; color: var(--muted); }
   </style>
   <!-- 載入專案內兩篇經典文獻與書籍資料 (免 AJAX CORS 限制) -->
-  <script src="./app/book-data-v5.js"></script>
-  <script src="./public/book/positive-psychology-progress/ppp-data.js"></script>
+  <script src="./source_materials/psychology-money/book-data-v5.js"></script>
+  <script src="./source_materials/positive-psychology-progress/ppp-data.js"></script>
 </head>
 <body>
 
@@ -398,7 +398,7 @@
   <script>
     /* Service Worker Registration for PWA Offline App */
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./public/sw.js?v=11', { scope: './' })
+      navigator.serviceWorker.register('./sw.js?v=11', { scope: './' })
         .then(reg => reg.update())
         .catch(() => {});
     }
@@ -495,7 +495,7 @@
 
     // Figures registry for Positive Psychology Progress paper
     function getFiguresForPair(pairId) {
-      const base = "./public/book/positive-psychology-progress/figures";
+      const base = "./source_materials/positive-psychology-progress/figures";
       if (pairId === "ppp-chapter-10-pair-0") return [{ src: `${base}/table-1.png`, caption: "Original PDF · Table 1: Classification of Character Strengths (品格優勢分類表)" }];
       if (pairId === "ppp-chapter-6-pair-3" || pairId === "ppp-chapter-11-pair-0") return [{ src: `${base}/figure-1.png`, caption: "Original PDF · Figure 1: Steen Happiness Index scores over time (幸福感分數隨時間變化)" }];
       if (pairId === "ppp-chapter-11-pair-2") return [{ src: `${base}/figure-2.png`, caption: "Original PDF · Figure 2: CES-D Depressive symptom scores over time (憂鬱症狀分數隨時間變化)" }];
