@@ -249,9 +249,9 @@
     .speechPlayer small { font-size: 11px; color: var(--muted); }
   </style>
   <!-- 載入專案內三篇經典文獻與書籍資料 (免 AJAX CORS 限制) -->
-  <script src="./source_materials/psychology-money/book-data-v5.js"></script>
-  <script src="./source_materials/positive-psychology-progress/ppp-data.js"></script>
-  <script src="./source_materials/red-book/red-book-data.js"></script>
+  <script src="./source_materials/psychology-money/book-data-v5.js?v=12"></script>
+  <script src="./source_materials/positive-psychology-progress/ppp-data.js?v=12"></script>
+  <script src="./source_materials/red-book/red-book-data.js?v=12"></script>
 </head>
 <body>
 
@@ -399,7 +399,7 @@
   <script>
     /* Service Worker Registration for PWA Offline App */
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js?v=11', { scope: './' })
+      navigator.serviceWorker.register('./sw.js?v=12', { scope: './' })
         .then(reg => reg.update())
         .catch(() => {});
     }
