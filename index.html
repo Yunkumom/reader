@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Bilingual Reader v11｜金錢心理學與正向心理學研究 雙語閱讀器</title>
   <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./public/manifest.webmanifest">
+  <meta name="theme-color" content="#f2ead8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
     :root {
       --font-size: 21px;
@@ -43,8 +47,8 @@
 
     /* Top Nav Bar */
     .topbar {
-      position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: var(--ui-height);
-      padding: 0 max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+      position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: calc(var(--ui-height) + env(safe-area-inset-top));
+      padding: env(safe-area-inset-top) max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
       display: grid; grid-template-columns: 44px minmax(0, 1fr) repeat(4, 44px); align-items: center; gap: 4px;
       background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom: 1px solid var(--line);
       backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
@@ -64,19 +68,19 @@
     .locationTitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 760; }
     .locationButton small { max-width: 100%; margin-top: 2px; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums; }
 
-    .progressTrack { position: fixed; z-index: 51; top: var(--ui-height); left: 0; right: 0; height: 3px; background: var(--line); }
+    .progressTrack { position: fixed; z-index: 51; top: calc(var(--ui-height) + env(safe-area-inset-top)); left: 0; right: 0; height: 3px; background: var(--line); }
     .progressBar { height: 100%; background: var(--accent); transition: width .08s linear; width: 0%; }
 
     /* Reader Main Layout */
-    .reader { width: min(var(--measure), calc(100% - 34px)); margin: 0 auto; padding: calc(var(--ui-height) + 32px) 0 100px; }
-    .bookCover { min-height: 50vh; padding: 8vh 0 6vh; display: flex; flex-direction: column; justify-content: center; text-align: center; border-bottom: 2px dashed var(--line); margin-bottom: 36px; }
+    .reader { width: min(var(--measure), calc(100% - 34px)); margin: 0 auto; padding: calc(var(--ui-height) + env(safe-area-inset-top) + 32px) 0 calc(100px + env(safe-area-inset-bottom)); }
+    .bookCover { min-height: 46vh; padding: 6vh 0 5vh; display: flex; flex-direction: column; justify-content: center; text-align: center; border-bottom: 2px dashed var(--line); margin-bottom: 36px; }
     .eyebrow { margin: 0 0 16px; color: var(--accent); font-size: 12px; font-weight: 780; letter-spacing: .18em; text-transform: uppercase; }
-    .bookCover h1 { margin: 0; font: 720 clamp(32px, 8vw, 56px)/1.12 var(--serif-en); letter-spacing: -.026em; }
-    .zhCover { margin: 16px 0 0; color: var(--zh); font: 650 clamp(22px, 6vw, 36px)/1.35 var(--serif-zh); }
+    .bookCover h1 { margin: 0; font: 720 clamp(30px, 8vw, 56px)/1.12 var(--serif-en); letter-spacing: -.026em; }
+    .zhCover { margin: 16px 0 0; color: var(--zh); font: 650 clamp(20px, 6vw, 36px)/1.35 var(--serif-zh); }
     .author { margin: 20px 0 0; color: var(--muted); font-size: 15px; }
 
     /* Paragraph Pair & Controls */
-    .pair { position: relative; margin: 0 0 1.4em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + 18px); padding: 8px 12px; transition: padding-top .16s ease, background .16s ease; }
+    .pair { position: relative; margin: 0 0 1.4em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 8px 12px; transition: padding-top .16s ease, background .16s ease; }
     .pair:hover { background: color-mix(in srgb, var(--surface) 50%, transparent); }
     .pair.controlsVisible { padding-top: 52px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 58%, transparent) 46px, transparent 46px); }
     
@@ -114,8 +118,9 @@
     .panel {
       position: fixed; z-index: 100; top: 0; bottom: 0; right: 0; left: auto;
       width: min(440px, 88vw); background: var(--surface);
-      box-shadow: var(--shadow); border-left: 1px solid var(--line); padding: 20px; overflow-y: auto;
-      transform: translateX(100%); transition: transform .24s cubic-bezier(0.16, 1, 0.3, 1), visibility .24s;
+      box-shadow: var(--shadow); border-left: 1px solid var(--line);
+      padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+      overflow-y: auto; transform: translateX(100%); transition: transform .24s cubic-bezier(0.16, 1, 0.3, 1), visibility .24s;
       visibility: hidden; pointer-events: none;
     }
     .panel.left { left: 0; right: auto; border-left: 0; border-right: 1px solid var(--line); transform: translateX(-100%); }
@@ -133,6 +138,13 @@
     }
     .closeButton:hover, .closeButton:active {
       background: var(--accent); color: white; border-color: var(--accent);
+    }
+
+    /* Progressive & Offline Status Badge */
+    .offlineStatusBadge {
+      margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--accent);
+      display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+      padding: 6px 12px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
     }
 
     /* Library & Publications Switcher */
@@ -176,7 +188,7 @@
 
     /* Speech Player Bar */
     .speechPlayer {
-      position: fixed; z-index: 80; bottom: 20px; left: 50%; transform: translateX(-50%); width: min(400px, 90vw);
+      position: fixed; z-index: 80; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(400px, 90vw);
       background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 16px;
       display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: var(--shadow);
     }
@@ -208,7 +220,10 @@
   <!-- TOC & Library Selection Panel -->
   <aside class="panel left" id="tocPanel">
     <div class="panelHead">
-      <h2>Library & Contents｜書庫與目錄</h2>
+      <div>
+        <h2>Library & Contents｜書庫與目錄</h2>
+        <div class="offlineStatusBadge" id="offlineProgressBadge">⚡ 離線漸進快取準備中...</div>
+      </div>
       <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
     </div>
     
@@ -302,7 +317,7 @@
     </div>
 
     <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
-      💡 互動提示：單點段落選取並顯示工具控制按鈕，點按 🔊 即可直接語音朗讀單句或段落。
+      💡 離線快取說明：首次開啟時先迅速載入第一章，背景會自動完成後續各章節離線快取，下次開啟手機即可零延遲離線閱讀。
     </p>
   </aside>
 
@@ -324,6 +339,61 @@
   </div>
 
   <script>
+    /* Service Worker Registration for PWA Offline App */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./public/sw.js?v=11', { scope: './' })
+        .then(reg => reg.update())
+        .catch(() => {});
+    }
+
+    /* IndexedDB Offline Storage Engine */
+    const DB_NAME = 'ReaderOfflineCacheDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'publication_sections';
+
+    function openOfflineDB() {
+      return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) { resolve(null); return; }
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+          }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function saveSectionToOfflineDB(pubId, chapterIndex, sectionData) {
+      const db = await openOfflineDB();
+      if (!db) return;
+      try {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const key = `${pubId}_ch_${chapterIndex}`;
+        store.put({ key, pubId, chapterIndex, data: sectionData, timestamp: Date.now() });
+      } catch (err) {}
+    }
+
+    async function getSectionFromOfflineDB(pubId, chapterIndex) {
+      const db = await openOfflineDB();
+      if (!db) return null;
+      try {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const key = `${pubId}_ch_${chapterIndex}`;
+        return new Promise((resolve) => {
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result ? req.result.data : null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    }
+
     // System & Data Registry
     const publications = [
       {
@@ -362,6 +432,8 @@
     let lineHeight = parseFloat(localStorage.getItem('pmr_lineHeight') || '1.82');
     let measureWidth = parseInt(localStorage.getItem('pmr_width') || '720');
     let bookmarks = JSON.parse(localStorage.getItem('pmr_bookmarks') || '[]');
+    let progressiveQueue = [];
+    let isProgressiveCaching = false;
 
     // Figures registry for Positive Psychology Progress paper
     function getFiguresForPair(pairId) {
@@ -411,7 +483,6 @@
       const raw = pub.getData();
       if (!raw) return null;
 
-      // Handle Book data format vs Paper bundle format
       if (raw.sections) {
         return {
           title: raw.title,
@@ -445,16 +516,87 @@
       return null;
     }
 
-    function loadActivePublication() {
+    async function loadActivePublication() {
       const data = getActivePubData();
       if (!data) {
         document.getElementById('loading').innerHTML = '⚠️ 無法載入刊物資料，請重新整理。';
         return;
       }
+
+      // Step 1: Immediate rendering of Section 0 (First section for instant mobile FCP)
       document.getElementById('loading').style.display = 'none';
       renderTOC(data);
-      renderChapter(data, currentChapterIndex);
+
+      // Check if Section 0 is in IndexedDB
+      const cachedSection0 = await getSectionFromOfflineDB(currentPubId, 0);
+      if (cachedSection0) {
+        renderChapterWithData(data, 0, cachedSection0);
+      } else {
+        renderChapter(data, currentChapterIndex);
+        // Save section 0 to IndexedDB immediately
+        saveSectionToOfflineDB(currentPubId, 0, data.chapters[0]);
+      }
+
       renderBookmarks();
+
+      // Step 2: Progressive background caching of remaining sections (1 .. N)
+      startProgressiveCache(data);
+    }
+
+    async function startProgressiveCache(data) {
+      progressiveQueue = [];
+      const total = data.chapters.length;
+
+      for (let i = 0; i < total; i++) {
+        const cached = await getSectionFromOfflineDB(currentPubId, i);
+        if (!cached) {
+          progressiveQueue.push(i);
+        }
+      }
+
+      if (progressiveQueue.length === 0) {
+        updateOfflineBadge(total, total, true);
+      } else if (!isProgressiveCaching) {
+        processProgressiveQueue(data);
+      }
+    }
+
+    async function processProgressiveQueue(data) {
+      const total = data.chapters.length;
+      if (progressiveQueue.length === 0) {
+        isProgressiveCaching = false;
+        updateOfflineBadge(total, total, true);
+        return;
+      }
+
+      isProgressiveCaching = true;
+      const chIdx = progressiveQueue.shift();
+      const chapterObj = data.chapters[chIdx];
+      
+      if (chapterObj) {
+        await saveSectionToOfflineDB(currentPubId, chIdx, chapterObj);
+        const done = total - progressiveQueue.length;
+        updateOfflineBadge(done, total, false);
+      }
+
+      // Yield thread to UI via idle callback or timeout
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => processProgressiveQueue(data), { timeout: 1000 });
+      } else {
+        setTimeout(() => processProgressiveQueue(data), 120);
+      }
+    }
+
+    function updateOfflineBadge(doneCount, totalCount, isComplete) {
+      const badge = document.getElementById('offlineProgressBadge');
+      if (!badge) return;
+      if (isComplete) {
+        badge.innerHTML = `✓ 本機已可全篇離線閱讀 (${totalCount}/${totalCount} 章)`;
+        badge.style.color = 'var(--zh)';
+      } else {
+        badge.innerHTML = `⚡ 離線漸進快取中... (${doneCount}/${totalCount} 章)`;
+        badge.style.color = 'var(--accent)';
+      }
     }
 
     function renderTOC(data) {
@@ -467,12 +609,21 @@
       `).join('');
     }
 
-    function goToChapter(idx) {
+    async function goToChapter(idx) {
       const data = getActivePubData();
       if (!data || !data.chapters[idx]) return;
       currentChapterIndex = idx;
       renderTOC(data);
-      renderChapter(data, idx);
+
+      // Check IndexedDB first for instant offline render
+      const cached = await getSectionFromOfflineDB(currentPubId, idx);
+      if (cached) {
+        renderChapterWithData(data, idx, cached);
+      } else {
+        renderChapter(data, idx);
+        saveSectionToOfflineDB(currentPubId, idx, data.chapters[idx]);
+      }
+
       closePanels();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -484,7 +635,10 @@
     }
 
     function renderChapter(data, idx) {
-      const ch = data.chapters[idx];
+      renderChapterWithData(data, idx, data.chapters[idx]);
+    }
+
+    function renderChapterWithData(data, idx, ch) {
       document.getElementById('navChapterTitle').innerText = ch.enTitle;
       document.getElementById('navProgress').innerText = `${data.title} · 第 ${idx + 1}/${data.chapters.length} 章`;
 
@@ -615,18 +769,16 @@
     }
 
     function goToSearchResult(cIdx, pairId) {
-      const data = getActivePubData();
-      currentChapterIndex = cIdx;
-      renderChapter(data, cIdx);
-      closePanels();
-      setTimeout(() => {
-        const el = document.getElementById(pairId);
-        if (el) {
-          el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-          selectPair(pairId);
-          togglePairZh(pairId);
-        }
-      }, 150);
+      goToChapter(cIdx).then(() => {
+        setTimeout(() => {
+          const el = document.getElementById(pairId);
+          if (el) {
+            el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            selectPair(pairId);
+            togglePairZh(pairId);
+          }
+        }, 150);
+      });
     }
 
     function toggleBookmark() {
