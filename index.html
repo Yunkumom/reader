@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="eye" data-font="serif">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>The Psychology of Money｜金錢心理學 雙語閱讀器 v11</title>
+  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
+  <style>
+    :root {
+      --font-size: 21px;
+      --line-height: 1.82;
+      --measure: 720px;
+      --ui-height: 56px;
+      --serif-en: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --serif-zh: "Songti TC", "Noto Serif TC", "PMingLiU", serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+    }
+
+    html[data-theme="light"] {
+      --bg: #fbfaf7; --surface: #ffffff; --text: #25272a; --muted: #6f7479;
+      --line: #e5e2dc; --accent: #1877d2; --zh: #087d54; --zh-bg: #eef8f3;
+      --shadow: 0 8px 30px rgba(20, 20, 20, .10); color-scheme: light;
+    }
+
+    html[data-theme="eye"] {
+      --bg: #f2ead8; --surface: #faf4e7; --text: #39352e; --muted: #777064;
+      --line: #ded1b8; --accent: #326d6a; --zh: #167451; --zh-bg: #e5efdf;
+      --shadow: 0 8px 30px rgba(67, 51, 25, .12); color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0d1526; --surface: #172235; --text: #d7deea; --muted: #8e9aae;
+      --line: #2c3b52; --accent: #4a91ff; --zh: #45dc88; --zh-bg: #17283a;
+      --shadow: 0 8px 34px rgba(0, 0, 0, .36); color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+      font-family: var(--sans); transition: background .18s ease, color .18s ease;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Launcher Header Bar */
+    .launcher-bar {
+      background: color-mix(in srgb, var(--surface) 95%, transparent);
+      border-bottom: 1px solid var(--line);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .launcher-title {
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      background: var(--accent);
+      color: white;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .launcher-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.15s ease;
+    }
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      color: white;
+    }
+
+    /* Reader Navbar */
+    .topbar {
+      position: sticky;
+      top: 45px;
+      z-index: 50;
+      height: var(--ui-height);
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) repeat(3, 44px);
+      align-items: center;
+      gap: 6px;
+      background: color-mix(in srgb, var(--bg) 92%, transparent);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px);
+    }
+    .iconButton {
+      width: 40px; height: 40px; border: 0; border-radius: 10px;
+      display: grid; place-items: center; background: transparent; color: var(--text);
+      cursor: pointer; font-size: 18px;
+    }
+    .iconButton:hover, .iconButton.active {
+      background: var(--surface);
+      box-shadow: inset 0 0 0 1px var(--line);
+    }
+    .locationButton {
+      min-width: 0; padding: 4px 8px; border: 0; border-radius: 8px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: transparent; color: var(--text); cursor: pointer;
+    }
+    .locationTitle {
+      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      font-size: 13px; font-weight: 700;
+    }
+    .locationSub {
+      font-size: 11px; color: var(--muted); margin-top: 1px;
+    }
+
+    .progressTrack {
+      position: sticky; top: calc(45px + var(--ui-height)); left: 0; right: 0; height: 3px; background: var(--line); z-index: 51;
+    }
+    .progressBar { height: 100%; background: var(--accent); width: 0%; transition: width 0.1s linear; }
+
+    .reader-container {
+      width: min(var(--measure), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 100px;
+    }
+
+    .bookCover {
+      text-align: center;
+      padding: 40px 0 60px;
+      border-bottom: 2px dashed var(--line);
+      margin-bottom: 40px;
+    }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; margin-bottom: 12px; }
+    .bookCover h1 { margin: 0; font-family: var(--serif-en); font-size: clamp(32px, 8vw, 52px); line-height: 1.15; }
+    .zhCover { margin: 12px 0 0; color: var(--zh); font-family: var(--serif-zh); font-size: clamp(22px, 6vw, 32px); }
+    .author { margin-top: 16px; color: var(--muted); font-size: 15px; }
+
+    /* Paragraph Pair */
+    .pair {
+      margin-bottom: 1.6em;
+      border-radius: 12px;
+      padding: 8px 12px;
+      transition: background 0.15s ease;
+      position: relative;
+    }
+    .pair:hover {
+      background: color-mix(in srgb, var(--surface) 60%, transparent);
+    }
+    .enText {
+      font-family: var(--serif-en);
+      font-size: var(--font-size);
+      line-height: var(--line-height);
+      cursor: pointer;
+      margin: 0;
+    }
+    html[data-font="sans"] .enText {
+      font-family: var(--sans);
+    }
+    .zhText {
+      font-family: var(--serif-zh);
+      font-size: calc(var(--font-size) * 0.92);
+      line-height: var(--line-height);
+      color: var(--zh);
+      background: var(--zh-bg);
+      padding: 10px 14px;
+      border-radius: 8px;
+      margin-top: 8px;
+      display: none;
+    }
+    .pair.show-zh .zhText, html.showAll .zhText {
+      display: block;
+    }
+
+    .speaking {
+      background: color-mix(in srgb, var(--accent) 25%, transparent);
+      border-radius: 4px;
+    }
+
+    /* Modal / Drawer */
+    .drawer {
+      position: fixed; inset: 0; z-index: 200; background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center;
+    }
+    .drawer.active { display: flex; }
+    .drawer-content {
+      background: var(--surface); width: 100%; max-width: 600px; max-height: 80vh;
+      border-radius: 20px 20px 0 0; padding: 20px; overflow-y: auto;
+      box-shadow: var(--shadow); border: 1px solid var(--line);
+    }
+    .drawer-header {
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;
+      padding-bottom: 12px; border-bottom: 1px solid var(--line);
+    }
+    .drawer-title { font-size: 18px; font-weight: 700; }
+    .toc-item {
+      padding: 12px 14px; border-radius: 10px; cursor: pointer; display: flex; justify-content: space-between;
+      margin-bottom: 4px; transition: background 0.12s;
+    }
+    .toc-item:hover, .toc-item.active {
+      background: color-mix(in srgb, var(--accent) 15%, transparent);
+      color: var(--accent); font-weight: 700;
+    }
+
+    /* Controls Grid */
+    .control-group {
+      margin-bottom: 18px;
+    }
+    .control-label {
+      font-size: 13px; font-weight: 700; color: var(--muted); margin-bottom: 8px;
+    }
+    .btn-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+    }
+    .btn-grid button {
+      padding: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text);
+      border-radius: 10px; cursor: pointer; font-weight: 600;
+    }
+    .btn-grid button.active {
+      border-color: var(--accent); background: var(--accent); color: white;
+    }
+    
+    .loading-spinner {
+      text-align: center; padding: 60px 0; font-size: 16px; color: var(--muted);
+    }
+  </style>
+  <!-- 載入本機書籍資料腳本，解決 file:// 協議的 CORS 限制 -->
+  <script src="./app/book-data-v5.js"></script>
+</head>
+<body>
+
+  <!-- Top Launcher Info Header -->
+  <div class="launcher-bar">
+    <div class="launcher-title">
+      <span>📖 金錢心理學 雙語閱讀器</span>
+      <span class="badge">v11 電腦本機直開模式</span>
+    </div>
+    <div class="launcher-actions">
+      <button class="btn" onclick="checkDevServer()">⚡ 測試伺服器狀態</button>
+      <a href="http://localhost:5173" target="_blank" class="btn btn-primary" id="devLink">🚀 開啟 Vite Dev (localhost:5173)</a>
+    </div>
+  </div>
+
+  <!-- Reader Navbar -->
+  <div class="topbar">
+    <button class="iconButton" title="章節目錄 (TOC)" onclick="toggleDrawer('tocDrawer')">☰</button>
+    <button class="locationButton" onclick="toggleDrawer('tocDrawer')">
+      <span class="locationTitle" id="navChapterTitle">導言：世上最精彩的表演</span>
+      <span class="locationSub" id="navProgress">第 1 章 / 共 24 章</span>
+    </button>
+    <button class="iconButton" id="btnToggleAll" title="切換全顯中英對照" onclick="toggleShowAll()">對</button>
+    <button class="iconButton" title="朗讀 / 語音設定" onclick="readCurrentParagraph()">🔊</button>
+    <button class="iconButton" title="閱讀設定" onclick="toggleDrawer('settingsDrawer')">⚙</button>
+  </div>
+  <div class="progressTrack"><div class="progressBar" id="progressBar"></div></div>
+
+  <!-- Main Content Area -->
+  <main class="reader-container">
+    <div class="bookCover">
+      <div class="eyebrow">Timeless lessons on wealth, greed, and happiness</div>
+      <h1>The Psychology of Money</h1>
+      <div class="zhCover">金錢心理學：獲利心態與財富思維的永恆解答</div>
+      <div class="author">Morgan Housel 摩根・豪瑟 著</div>
+    </div>
+
+    <div id="loading" class="loading-spinner">
+      ⏳ 正在載入書籍內容，請稍候...
+    </div>
+
+    <div id="readerContent"></div>
+  </main>
+
+  <!-- TOC Drawer -->
+  <div class="drawer" id="tocDrawer" onclick="closeDrawers(event)">
+    <div class="drawer-content" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">📚 章節目錄 Table of Contents</div>
+        <button class="iconButton" onclick="toggleDrawer('tocDrawer')">✕</button>
+      </div>
+      <div id="tocList"></div>
+    </div>
+  </div>
+
+  <!-- Settings Drawer -->
+  <div class="drawer" id="settingsDrawer" onclick="closeDrawers(event)">
+    <div class="drawer-content" onclick="event.stopPropagation()">
+      <div class="drawer-header">
+        <div class="drawer-title">⚙ 閱讀偏好設定</div>
+        <button class="iconButton" onclick="toggleDrawer('settingsDrawer')">✕</button>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">主題色彩 (Theme)</div>
+        <div class="btn-grid">
+          <button id="theme-eye" onclick="setTheme('eye')">🌾 護眼暖色</button>
+          <button id="theme-light" onclick="setTheme('light')">☀️ 明亮模式</button>
+          <button id="theme-dark" onclick="setTheme('dark')">🌙 深色夜間</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">字型風格 (Font Family)</div>
+        <div class="btn-grid">
+          <button id="font-serif" onclick="setFont('serif')">襯線體 (Serif)</button>
+          <button id="font-sans" onclick="setFont('sans')">無襯線體 (Sans)</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">字級大小 (Font Size): <span id="fontSizeVal">21px</span></div>
+        <input type="range" min="16" max="30" value="21" style="width:100%" oninput="setFontSize(this.value)">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // State Management
+    let bookData = null;
+    let currentChapterIndex = 0;
+    let showAllZh = false;
+    let currentTheme = localStorage.getItem('pmr_theme') || 'eye';
+    let currentFont = localStorage.getItem('pmr_font') || 'serif';
+    let fontSize = parseInt(localStorage.getItem('pmr_fontSize') || '21');
+
+    // Init Theme & Settings
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.documentElement.setAttribute('data-font', currentFont);
+    document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+
+    async function initBookData() {
+      // 優先使用 window.BOOK_DATA (由 book-data-v5.js 引入，完全無 CORS 限制)
+      if (window.BOOK_DATA) {
+        bookData = window.BOOK_DATA;
+        renderTOC();
+        renderChapter(0);
+        document.getElementById('loading').style.display = 'none';
+        return;
+      }
+
+      // 次要嘗試 fetch AJAX
+      try {
+        let resp = await fetch('./app/book-data-v5.json').catch(() => null);
+        if (!resp || !resp.ok) resp = await fetch('./app/book-data.json').catch(() => null);
+        
+        if (resp && resp.ok) {
+          bookData = await resp.json();
+          renderTOC();
+          renderChapter(0);
+          document.getElementById('loading').style.display = 'none';
+          return;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      // 若皆無法自動讀取，顯示手動選檔備用按鈕
+      document.getElementById('loading').innerHTML = `
+        ⚠️ 無法自動讀取書籍資料。<br><br>
+        <button class="btn btn-primary" style="margin: 0 auto;" onclick="triggerFilePicker()">📂 請點此手動選擇本機 app/book-data-v5.json 檔案</button>
+        <input type="file" id="filePicker" accept=".json" style="display:none" onchange="handleFileSelect(event)">
+      `;
+    }
+
+    function triggerFilePicker() {
+      document.getElementById('filePicker').click();
+    }
+
+    function handleFileSelect(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(evt) {
+        try {
+          bookData = JSON.parse(evt.target.result);
+          renderTOC();
+          renderChapter(0);
+          document.getElementById('loading').style.display = 'none';
+        } catch (err) {
+          alert('解析 JSON 檔案失敗！');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function renderTOC() {
+      const container = document.getElementById('tocList');
+      if (!bookData || !bookData.sections) return;
+
+      container.innerHTML = bookData.sections.map((sec, idx) => `
+        <div class="toc-item ${idx === currentChapterIndex ? 'active' : ''}" onclick="selectChapter(${idx})">
+          <div>
+            <div>${sec.enTitle}</div>
+            <div style="font-size:12px; color:var(--muted);">${sec.zhTitle}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectChapter(idx) {
+      currentChapterIndex = idx;
+      renderChapter(idx);
+      toggleDrawer('tocDrawer');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function renderChapter(idx) {
+      if (!bookData || !bookData.sections || !bookData.sections[idx]) return;
+      const sec = bookData.sections[idx];
+      currentChapterIndex = idx;
+
+      document.getElementById('navChapterTitle').innerText = sec.zhTitle || sec.enTitle;
+      document.getElementById('navProgress').innerText = `第 ${idx + 1} 章 / 共 ${bookData.sections.length} 章`;
+
+      const container = document.getElementById('readerContent');
+      let html = `
+        <div class="chapter-header" style="margin-bottom: 28px; padding-bottom: 16px; border-bottom: 2px solid var(--line);">
+          <h2 style="font-family: var(--serif-en); margin: 0; font-size: 28px;">${sec.enTitle}</h2>
+          <h3 style="font-family: var(--serif-zh); margin: 6px 0 0; color: var(--zh); font-size: 22px;">${sec.zhTitle}</h3>
+        </div>
+      `;
+
+      sec.pairs.forEach((pair, pIdx) => {
+        html += `
+          <div class="pair" id="pair-${idx}-${pIdx}" onclick="toggleZh(this)">
+            <p class="enText" onclick="speakText(event, '${escapeJs(pair.en)}')">${pair.en}</p>
+            <div class="zhText">${pair.zh}</div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      updateProgressBar();
+      renderTOC();
+    }
+
+    function toggleZh(el) {
+      el.classList.toggle('show-zh');
+    }
+
+    function toggleShowAll() {
+      showAllZh = !showAllZh;
+      document.documentElement.classList.toggle('showAll', showAllZh);
+      document.getElementById('btnToggleAll').classList.toggle('active', showAllZh);
+    }
+
+    function escapeJs(str) {
+      return (str || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
+    }
+
+    function speakText(evt, text) {
+      evt.stopPropagation();
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function readCurrentParagraph() {
+      const firstEn = document.querySelector('.enText');
+      if (firstEn) {
+        speakText(new Event('click'), firstEn.innerText);
+      }
+    }
+
+    function toggleDrawer(id) {
+      const el = document.getElementById(id);
+      el.classList.toggle('active');
+    }
+
+    function closeDrawers(e) {
+      if (e.target.classList.contains('drawer')) {
+        e.target.classList.remove('active');
+      }
+    }
+
+    function setTheme(t) {
+      currentTheme = t;
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('pmr_theme', t);
+    }
+
+    function setFont(f) {
+      currentFont = f;
+      document.documentElement.setAttribute('data-font', f);
+      localStorage.setItem('pmr_font', f);
+    }
+
+    function setFontSize(val) {
+      fontSize = val;
+      document.documentElement.style.setProperty('--font-size', val + 'px');
+      document.getElementById('fontSizeVal').innerText = val + 'px';
+      localStorage.setItem('pmr_fontSize', val);
+    }
+
+    function updateProgressBar() {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.scrollY;
+      const pct = scrollTotal > 0 ? Math.min(100, Math.max(0, (currentScroll / scrollTotal) * 100)) : 0;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    window.addEventListener('scroll', updateProgressBar);
+
+    function checkDevServer() {
+      fetch('http://localhost:5173', { mode: 'no-cors' })
+        .then(() => alert('✅ Vite 開發伺服器 (http://localhost:5173) 正在運行中！'))
+        .catch(() => alert('ℹ️ 未檢測到全功能 Vite 開發伺服器。若需執行全功能 Vite 伺服器，請在終端機執行 `npm run dev`。'));
+    }
+
+    initBookData();
+  </script>
+</body>
+</html>
