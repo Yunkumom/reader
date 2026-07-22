@@ -121,7 +121,17 @@
     
     .panelHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
     .panelHead h2 { margin: 0; font-size: 18px; font-weight: 780; }
-    .closeButton { width: 36px; height: 36px; border: 0; border-radius: 10px; background: var(--bg); color: var(--text); font-size: 16px; cursor: pointer; }
+    
+    /* Enhanced Close Button with High Hit Target */
+    .closeButton {
+      width: 40px; height: 40px; border: 1.5px solid var(--line); border-radius: 12px;
+      background: var(--surface); color: var(--text); font-size: 18px; font-weight: 700;
+      cursor: pointer; display: grid; place-items: center; transition: all 0.15s ease;
+      flex-shrink: 0; box-shadow: var(--shadow);
+    }
+    .closeButton:hover, .closeButton:active {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
 
     /* Library & Publications Switcher */
     .publicationSection { margin-bottom: 24px; }
@@ -179,25 +189,25 @@
 
   <!-- Top Navigation Header -->
   <header class="topbar">
-    <button class="iconButton" title="書庫與目錄 (Library & Contents)" onclick="togglePanel('tocPanel')">▦</button>
-    <button class="locationButton" onclick="togglePanel('navPanel')">
+    <button class="iconButton" title="書庫與目錄 (Library & Contents)" onclick="togglePanel('tocPanel', event)">▦</button>
+    <button class="locationButton" onclick="togglePanel('navPanel', event)">
       <span class="locationTitle" id="navChapterTitle">The Psychology of Money</span>
       <small id="navProgress">Loading reader...</small>
     </button>
     <button class="iconButton" id="btnToggleAll" title="切換對照顯示 (Show/Hide Chinese)" onclick="toggleShowAll()">文</button>
-    <button class="iconButton" title="全篇搜尋與書籤 (Search & Bookmarks)" onclick="togglePanel('navPanel')">⌕</button>
-    <button class="iconButton" title="閱讀偏好設定 (Settings)" onclick="togglePanel('settingsPanel')">Aa</button>
+    <button class="iconButton" title="全篇搜尋與書籤 (Search & Bookmarks)" onclick="togglePanel('navPanel', event)">⌕</button>
+    <button class="iconButton" title="閱讀偏好設定 (Settings)" onclick="togglePanel('settingsPanel', event)">Aa</button>
     <button class="iconButton" title="切換閱讀模式 (Theme)" onclick="cycleTheme()">◐</button>
   </header>
   <div class="progressTrack"><div class="progressBar" id="progressBar"></div></div>
 
-  <div class="scrim" id="scrim" onclick="closePanels()"></div>
+  <div class="scrim" id="scrim" onclick="closePanels(event)"></div>
 
   <!-- TOC & Library Selection Panel -->
   <aside class="panel left" id="tocPanel">
     <div class="panelHead">
       <h2>Library & Contents｜書庫與目錄</h2>
-      <button class="closeButton" onclick="closePanels()">✕</button>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
     </div>
     
     <div class="publicationSection">
@@ -215,7 +225,7 @@
   <aside class="panel" id="navPanel">
     <div class="panelHead">
       <h2>Book Navigation｜書籍導覽與搜尋</h2>
-      <button class="closeButton" onclick="closePanels()">✕</button>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
     </div>
 
     <div class="navActions">
@@ -241,7 +251,7 @@
   <aside class="panel" id="settingsPanel">
     <div class="panelHead">
       <h2>Reading Settings｜閱讀偏好設定</h2>
-      <button class="closeButton" onclick="closePanels()">✕</button>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
     </div>
 
     <div class="setting">
@@ -634,9 +644,11 @@
       el.innerHTML = bookmarks.map(id => `<div style="padding:4px 0;">★ ${id}</div>`).join('');
     }
 
-    /* Panels & UI Controls */
-    function togglePanel(id) {
+    /* Robust Panels & UI Controls */
+    function togglePanel(id, e) {
+      if (e) e.stopPropagation();
       const p = document.getElementById(id);
+      if (!p) return;
       const isOpen = p.classList.contains('show');
       closePanels();
       if (!isOpen) {
@@ -645,10 +657,29 @@
       }
     }
 
-    function closePanels() {
+    function closePanels(e) {
+      if (e) e.stopPropagation();
       document.querySelectorAll('.panel.show').forEach(p => p.classList.remove('show'));
-      document.getElementById('scrim').classList.remove('show');
+      const scrim = document.getElementById('scrim');
+      if (scrim) scrim.classList.remove('show');
     }
+
+    // Global Event Listeners for ESC key and Outside clicks
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePanels(e);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const openPanel = document.querySelector('.panel.show');
+      if (!openPanel) return;
+      const isInsidePanel = openPanel.contains(e.target);
+      const isTriggerBtn = e.target.closest('.iconButton') || e.target.closest('.locationButton');
+      if (!isInsidePanel && !isTriggerBtn) {
+        closePanels(e);
+      }
+    });
 
     function cycleTheme() {
       const themes = ['eye', 'light', 'dark'];
