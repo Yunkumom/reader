@@ -80,7 +80,7 @@
     .author { margin: 20px 0 0; color: var(--muted); font-size: 15px; }
 
     /* Paragraph Pair & Controls */
-    .pair { position: relative; margin: 0 0 1.4em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 8px 12px; transition: padding-top .16s ease, background .16s ease; cursor: pointer; }
+    .pair { position: relative; margin: 0 0 1.6em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 10px 14px; transition: padding-top .16s ease, background .16s ease; cursor: pointer; }
     .pair:hover { background: color-mix(in srgb, var(--surface) 50%, transparent); }
     .pair.controlsVisible { padding-top: 52px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 58%, transparent) 46px, transparent 46px); }
     
@@ -99,9 +99,15 @@
     .enText { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font-family: var(--serif-en); font-size: var(--font-size); line-height: var(--line-height); letter-spacing: .003em; }
     html[data-font="sans"] .enText { font-family: var(--sans); }
     
-    .translation { margin-top: 10px; display: none; }
-    .pair.open .translation, html.showAll .translation { display: block; }
-    .zhText { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font-family: var(--serif-zh); font-size: calc(var(--font-size) * 0.92); line-height: var(--line-height); color: var(--zh); background: var(--zh-bg); padding: 12px 16px; border-radius: 10px; }
+    /* Chinese Translation Block - Appears Directly Below as Next Paragraph Block */
+    .translation { margin-top: 14px; display: none; }
+    .pair.open .translation, html.showAll .translation { display: block !important; }
+    .zhText {
+      margin: 0; white-space: pre-line; overflow-wrap: anywhere;
+      font-family: var(--serif-zh); font-size: calc(var(--font-size) * 0.92); line-height: var(--line-height);
+      color: var(--zh); background: var(--zh-bg); padding: 14px 18px; border-radius: 12px;
+      border-left: 4px solid var(--zh); box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
 
     .sentence { transition: background 0.15s ease; border-radius: 3px; }
     .sentence.speaking { background: color-mix(in srgb, var(--accent) 30%, transparent); }
@@ -317,7 +323,7 @@
     </div>
 
     <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
-      💡 互動提示：點擊英文段落可展開/收合中文翻譯；再次點擊即可收回中文。雙擊英文段落可進行語音朗讀。
+      💡 互動提示：點擊英文段落即可展開/收合中文翻譯，中文會美觀顯示於下一段；再次點擊即可收回。雙擊段落可語音朗讀。
     </p>
   </aside>
 
@@ -434,7 +440,6 @@
     let bookmarks = JSON.parse(localStorage.getItem('pmr_bookmarks') || '[]');
     let progressiveQueue = [];
     let isProgressiveCaching = false;
-    let tapTimer = null;
 
     // Figures registry for Positive Psychology Progress paper
     function getFiguresForPair(pairId) {
@@ -664,11 +669,11 @@
         });
 
         html += `
-          <article class="pair" id="${pair.id}" onclick="handleParagraphTap(event, '${pair.id}', '${escapeJs(pair.en)}')">
+          <article class="pair" id="${pair.id}">
             ${figuresHtml}
             <div class="paragraphControls">
-              <button class="speakButton" onclick="event.stopPropagation(); speakParagraph('${escapeJs(pair.en)}')" title="朗讀英文">🔊</button>
-              <button class="translateButton" onclick="togglePairZh('${pair.id}', event)" title="對照中文">中</button>
+              <button type="button" class="speakButton" title="朗讀英文">🔊</button>
+              <button type="button" class="translateButton" title="對照中文">中</button>
             </div>
             <div class="english">
               <p class="enText">${pair.en}</p>
@@ -685,48 +690,59 @@
       updateProgressBar();
     }
 
-    /* Single Tap / Double Tap & Chinese Translation Toggle Engine */
-    function handleParagraphTap(e, pairId, text) {
-      e.stopPropagation();
-      
-      // Double Tap -> Speak English sentence
-      if (e.detail >= 2) {
-        if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
-        speakParagraph(text);
+    /* Event Delegation Engine for Bulletproof Paragraph Taps */
+    let pairTapTimer = null;
+
+    document.getElementById('readerContent').addEventListener('click', function(e) {
+      const pairEl = e.target.closest('article.pair');
+      if (!pairEl) return;
+
+      const isSpeakBtn = e.target.closest('.speakButton');
+      const isTranslateBtn = e.target.closest('.translateButton');
+
+      if (isSpeakBtn) {
+        e.stopPropagation();
+        const enText = pairEl.querySelector('.enText')?.innerText || '';
+        speakParagraph(enText);
         return;
       }
 
-      // Single Tap -> Toggle Chinese translation expand/collapse
-      if (tapTimer) clearTimeout(tapTimer);
-      tapTimer = setTimeout(() => {
-        tapTimer = null;
-        togglePairZh(pairId);
-      }, 220);
-    }
+      if (isTranslateBtn) {
+        e.stopPropagation();
+        togglePairElement(pairEl);
+        return;
+      }
 
-    function togglePairZh(pairId, e) {
-      if (e) e.stopPropagation();
-      const el = document.getElementById(pairId);
-      if (!el) return;
-      
-      document.querySelectorAll('.pair.controlsVisible').forEach(item => {
-        if (item !== el) item.classList.remove('controlsVisible');
+      // Handle single tap (toggle Chinese translation & controls) or double tap (read aloud)
+      if (e.detail >= 2) {
+        if (pairTapTimer) { clearTimeout(pairTapTimer); pairTapTimer = null; }
+        const enText = pairEl.querySelector('.enText')?.innerText || '';
+        speakParagraph(enText);
+        return;
+      }
+
+      if (pairTapTimer) clearTimeout(pairTapTimer);
+      pairTapTimer = setTimeout(() => {
+        pairTapTimer = null;
+        togglePairElement(pairEl);
+      }, 220);
+    });
+
+    function togglePairElement(pairEl) {
+      document.querySelectorAll('article.pair.controlsVisible').forEach(item => {
+        if (item !== pairEl) item.classList.remove('controlsVisible');
       });
-      el.classList.add('controlsVisible');
-      selectedPairId = pairId;
-      
-      // Expand or collapse Chinese translation on tap
-      el.classList.toggle('open');
+      pairEl.classList.add('controlsVisible');
+      selectedPairId = pairEl.id;
+
+      // Toggle open class for Chinese translation block
+      pairEl.classList.toggle('open');
     }
 
     function toggleShowAll() {
       showAllZh = !showAllZh;
       document.documentElement.classList.toggle('showAll', showAllZh);
       document.getElementById('btnToggleAll').classList.toggle('active', showAllZh);
-    }
-
-    function escapeJs(str) {
-      return (str || '').replace(/'/g, "\\'").replace(/\n/g, ' ');
     }
 
     /* Speech Synthesis Engine */
@@ -788,7 +804,7 @@
           const el = document.getElementById(pairId);
           if (el) {
             el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-            togglePairZh(pairId);
+            togglePairElement(el);
           }
         }, 150);
       });
