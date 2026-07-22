@@ -80,7 +80,7 @@
     .author { margin: 20px 0 0; color: var(--muted); font-size: 15px; }
 
     /* Paragraph Pair & Controls */
-    .pair { position: relative; margin: 0 0 1.4em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 8px 12px; transition: padding-top .16s ease, background .16s ease; }
+    .pair { position: relative; margin: 0 0 1.4em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 8px 12px; transition: padding-top .16s ease, background .16s ease; cursor: pointer; }
     .pair:hover { background: color-mix(in srgb, var(--surface) 50%, transparent); }
     .pair.controlsVisible { padding-top: 52px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 58%, transparent) 46px, transparent 46px); }
     
@@ -95,7 +95,7 @@
       border-color: var(--accent); background: var(--accent); color: white;
     }
 
-    .english { cursor: pointer; }
+    .english { user-select: text; }
     .enText { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font-family: var(--serif-en); font-size: var(--font-size); line-height: var(--line-height); letter-spacing: .003em; }
     html[data-font="sans"] .enText { font-family: var(--sans); }
     
@@ -317,7 +317,7 @@
     </div>
 
     <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
-      💡 離線快取說明：首次開啟時先迅速載入第一章，背景會自動完成後續各章節離線快取，下次開啟手機即可零延遲離線閱讀。
+      💡 互動提示：點擊英文段落可展開/收合中文翻譯；再次點擊即可收回中文。雙擊英文段落可進行語音朗讀。
     </p>
   </aside>
 
@@ -434,6 +434,7 @@
     let bookmarks = JSON.parse(localStorage.getItem('pmr_bookmarks') || '[]');
     let progressiveQueue = [];
     let isProgressiveCaching = false;
+    let tapTimer = null;
 
     // Figures registry for Positive Psychology Progress paper
     function getFiguresForPair(pairId) {
@@ -523,23 +524,18 @@
         return;
       }
 
-      // Step 1: Immediate rendering of Section 0 (First section for instant mobile FCP)
       document.getElementById('loading').style.display = 'none';
       renderTOC(data);
 
-      // Check if Section 0 is in IndexedDB
       const cachedSection0 = await getSectionFromOfflineDB(currentPubId, 0);
       if (cachedSection0) {
         renderChapterWithData(data, 0, cachedSection0);
       } else {
         renderChapter(data, currentChapterIndex);
-        // Save section 0 to IndexedDB immediately
         saveSectionToOfflineDB(currentPubId, 0, data.chapters[0]);
       }
 
       renderBookmarks();
-
-      // Step 2: Progressive background caching of remaining sections (1 .. N)
       startProgressiveCache(data);
     }
 
@@ -579,7 +575,6 @@
         updateOfflineBadge(done, total, false);
       }
 
-      // Yield thread to UI via idle callback or timeout
       if ('requestIdleCallback' in window) {
         requestIdleCallback(() => processProgressiveQueue(data), { timeout: 1000 });
       } else {
@@ -615,7 +610,6 @@
       currentChapterIndex = idx;
       renderTOC(data);
 
-      // Check IndexedDB first for instant offline render
       const cached = await getSectionFromOfflineDB(currentPubId, idx);
       if (cached) {
         renderChapterWithData(data, idx, cached);
@@ -670,11 +664,11 @@
         });
 
         html += `
-          <article class="pair" id="${pair.id}" onclick="selectPair('${pair.id}')">
+          <article class="pair" id="${pair.id}" onclick="handleParagraphTap(event, '${pair.id}', '${escapeJs(pair.en)}')">
             ${figuresHtml}
             <div class="paragraphControls">
               <button class="speakButton" onclick="event.stopPropagation(); speakParagraph('${escapeJs(pair.en)}')" title="朗讀英文">🔊</button>
-              <button class="translateButton" onclick="event.stopPropagation(); togglePairZh('${pair.id}')" title="對照中文">中</button>
+              <button class="translateButton" onclick="togglePairZh('${pair.id}', event)" title="對照中文">中</button>
             </div>
             <div class="english">
               <p class="enText">${pair.en}</p>
@@ -691,18 +685,38 @@
       updateProgressBar();
     }
 
-    function selectPair(id) {
-      document.querySelectorAll('.pair.controlsVisible').forEach(el => el.classList.remove('controlsVisible'));
-      const el = document.getElementById(id);
-      if (el) {
-        el.classList.add('controlsVisible');
-        selectedPairId = id;
+    /* Single Tap / Double Tap & Chinese Translation Toggle Engine */
+    function handleParagraphTap(e, pairId, text) {
+      e.stopPropagation();
+      
+      // Double Tap -> Speak English sentence
+      if (e.detail >= 2) {
+        if (tapTimer) { clearTimeout(tapTimer); tapTimer = null; }
+        speakParagraph(text);
+        return;
       }
+
+      // Single Tap -> Toggle Chinese translation expand/collapse
+      if (tapTimer) clearTimeout(tapTimer);
+      tapTimer = setTimeout(() => {
+        tapTimer = null;
+        togglePairZh(pairId);
+      }, 220);
     }
 
-    function togglePairZh(id) {
-      const el = document.getElementById(id);
-      if (el) el.classList.toggle('open');
+    function togglePairZh(pairId, e) {
+      if (e) e.stopPropagation();
+      const el = document.getElementById(pairId);
+      if (!el) return;
+      
+      document.querySelectorAll('.pair.controlsVisible').forEach(item => {
+        if (item !== el) item.classList.remove('controlsVisible');
+      });
+      el.classList.add('controlsVisible');
+      selectedPairId = pairId;
+      
+      // Expand or collapse Chinese translation on tap
+      el.classList.toggle('open');
     }
 
     function toggleShowAll() {
@@ -774,7 +788,6 @@
           const el = document.getElementById(pairId);
           if (el) {
             el.scrollIntoView({ block: 'start', behavior: 'smooth' });
-            selectPair(pairId);
             togglePairZh(pairId);
           }
         }, 150);
