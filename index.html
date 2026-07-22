@@ -84,7 +84,7 @@
     .zhCover { margin: 4px 0 0; color: var(--zh); font: 650 clamp(16px, 4vw, 22px)/1.3 var(--serif-zh); }
     .author { margin: 8px 0 0; color: var(--muted); font-size: 13px; font-weight: 500; }
 
-    /* Floating Edge Navigation Buttons - Hidden by default for immersive reading view */
+    /* Floating Edge Navigation Buttons - Hidden by default, auto-hide on scroll/swipe */
     .edgeNavBtn {
       position: fixed; z-index: 45; top: 50%;
       width: 46px; height: 58px; border-radius: 14px; border: 1px solid var(--line);
@@ -268,7 +268,7 @@
   </header>
   <div class="progressTrack"><div class="progressBar" id="progressBar"></div></div>
 
-  <!-- Floating Edge Navigation Buttons (Shown only after tapping screen, auto-hide while reading) -->
+  <!-- Floating Edge Navigation Buttons (Shown only after tapping screen, auto-hides on scroll/swipe) -->
   <button type="button" class="edgeNavBtn left" id="edgePrevBtn" onclick="prevChapter()" title="上一章 (Previous Chapter)">❮</button>
   <button type="button" class="edgeNavBtn right" id="edgeNextBtn" onclick="nextChapter()" title="下一章 (Next Chapter)">❯</button>
 
@@ -374,7 +374,7 @@
     </div>
 
     <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
-      💡 沉浸式提示：閱讀時翻頁按鈕自動隱藏，點擊螢幕即可顯示 ❮ ❯ 兩側翻頁圖示，4秒後自動恢復純淨閱讀。
+      💡 沉浸式提示：閱讀或滑動時翻頁按鈕自動隱藏，點擊螢幕即可顯示 ❮ ❯ 兩側翻頁圖示，滑動時自動關閉。
     </p>
   </aside>
 
@@ -696,6 +696,14 @@
       if (rightBtn) rightBtn.disabled = (idx === data.chapters.length - 1);
     }
 
+    function hideEdgeNav() {
+      const leftBtn = document.getElementById('edgePrevBtn');
+      const rightBtn = document.getElementById('edgeNextBtn');
+      if (leftBtn) leftBtn.classList.remove('show');
+      if (rightBtn) rightBtn.classList.remove('show');
+      if (edgeNavTimer) { clearTimeout(edgeNavTimer); edgeNavTimer = null; }
+    }
+
     function toggleEdgeNav(forceShow) {
       const leftBtn = document.getElementById('edgePrevBtn');
       const rightBtn = document.getElementById('edgeNextBtn');
@@ -710,8 +718,7 @@
 
       if (shouldShow) {
         edgeNavTimer = setTimeout(() => {
-          leftBtn.classList.remove('show');
-          rightBtn.classList.remove('show');
+          hideEdgeNav();
         }, 4000);
       }
     }
@@ -720,6 +727,7 @@
       document.getElementById('navChapterTitle').innerText = ch.enTitle;
       document.getElementById('navProgress').innerText = `${data.title} · 第 ${idx + 1}/${data.chapters.length} 章`;
       updateEdgeNavButtons(data, idx);
+      hideEdgeNav();
 
       let html = '';
       if (idx === 0) {
@@ -793,7 +801,7 @@
     document.getElementById('readerCanvas').addEventListener('click', function(e) {
       const pairEl = e.target.closest('article.pair');
 
-      // Always reveal edge navigation controls on screen tap
+      // Reveal edge navigation controls on screen tap
       toggleEdgeNav(true);
 
       if (!pairEl) return;
@@ -1025,7 +1033,19 @@
       document.getElementById('progressBar').style.width = pct + '%';
     }
 
-    window.addEventListener('scroll', updateProgressBar);
+    // Scroll & Swipe Event Listeners for Instant Auto-Hiding Edge Navigation
+    window.addEventListener('scroll', function() {
+      updateProgressBar();
+      hideEdgeNav();
+    }, { passive: true });
+
+    window.addEventListener('touchmove', function() {
+      hideEdgeNav();
+    }, { passive: true });
+
+    window.addEventListener('wheel', function() {
+      hideEdgeNav();
+    }, { passive: true });
 
     initReader();
   </script>
