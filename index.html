@@ -84,6 +84,21 @@
     .zhCover { margin: 4px 0 0; color: var(--zh); font: 650 clamp(16px, 4vw, 22px)/1.3 var(--serif-zh); }
     .author { margin: 8px 0 0; color: var(--muted); font-size: 13px; font-weight: 500; }
 
+    /* Floating Edge Navigation Buttons for Screen Left & Right Sides */
+    .edgeNavBtn {
+      position: fixed; z-index: 45; top: 50%; transform: translateY(-50%);
+      width: 44px; height: 56px; border-radius: 14px; border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 88%, transparent); color: var(--text);
+      display: grid; place-items: center; font-size: 20px; font-weight: 800; cursor: pointer;
+      box-shadow: var(--shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: all 0.18s ease; opacity: 0.85;
+    }
+    .edgeNavBtn:hover { opacity: 1; transform: translateY(-50%) scale(1.08); background: var(--accent); color: white; border-color: var(--accent); }
+    .edgeNavBtn:active { transform: translateY(-50%) scale(0.95); }
+    .edgeNavBtn.left { left: max(8px, env(safe-area-inset-left)); }
+    .edgeNavBtn.right { right: max(8px, env(safe-area-inset-right)); }
+    .edgeNavBtn:disabled { opacity: 0.2; pointer-events: none; }
+
     /* Paragraph Pair & Controls */
     .pair { position: relative; margin: 0 0 1.6em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 10px 14px; transition: padding-top .16s ease, background .16s ease; cursor: pointer; }
     .pair:hover { background: color-mix(in srgb, var(--surface) 50%, transparent); }
@@ -247,6 +262,10 @@
   </header>
   <div class="progressTrack"><div class="progressBar" id="progressBar"></div></div>
 
+  <!-- Floating Edge Navigation Buttons for Screen Left & Right Sides -->
+  <button type="button" class="edgeNavBtn left" id="edgePrevBtn" onclick="prevChapter()" title="上一章 (Previous Chapter)">❮</button>
+  <button type="button" class="edgeNavBtn right" id="edgeNextBtn" onclick="nextChapter()" title="下一章 (Next Chapter)">❯</button>
+
   <div class="scrim" id="scrim" onclick="closePanels(event)"></div>
 
   <!-- TOC & Library Selection Panel -->
@@ -349,7 +368,7 @@
     </div>
 
     <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
-      💡 互動提示：點擊英文段落即可展開/收合中文翻譯，中文會美觀顯示於下一段；再次點擊即可收回。雙擊段落可語音朗讀。
+      💡 互動提示：點擊英文段落即可展開/收合中文翻譯，中文會美觀顯示於下一段；再次點擊即可收回。雙擊段落可語音朗讀。點擊畫面右側 ❯ 圖示可直接跳至下一章。
     </p>
   </aside>
 
@@ -663,9 +682,17 @@
       renderChapterWithData(data, idx, data.chapters[idx]);
     }
 
+    function updateEdgeNavButtons(data, idx) {
+      const leftBtn = document.getElementById('edgePrevBtn');
+      const rightBtn = document.getElementById('edgeNextBtn');
+      if (leftBtn) leftBtn.disabled = (idx === 0);
+      if (rightBtn) rightBtn.disabled = (idx === data.chapters.length - 1);
+    }
+
     function renderChapterWithData(data, idx, ch) {
       document.getElementById('navChapterTitle').innerText = ch.enTitle;
       document.getElementById('navProgress').innerText = `${data.title} · 第 ${idx + 1}/${data.chapters.length} 章`;
+      updateEdgeNavButtons(data, idx);
 
       let html = '';
       if (idx === 0) {
