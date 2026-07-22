@@ -24,5 +24,18 @@
     "manifestUrl": "/book/positive-psychology-progress/manifest.json",
     "description": "A randomized controlled study of positive-psychology interventions and lasting happiness.",
     "zhDescription": "以隨機對照研究檢驗正向心理學介入與持久幸福感。"
+  },
+  {
+    "id": "red-book",
+    "type": "book",
+    "title": "The Red Book: Liber Novus",
+    "zhTitle": "紅書：新書",
+    "author": "C. G. Jung",
+    "zhAuthor": "卡爾・古斯塔夫・榮格",
+    "year": 2009,
+    "pdfTotalPages": 404,
+    "manifestUrl": "/source_materials/red-book/manifest.json",
+    "description": "Carl Gustav Jung's masterpiece on active imagination, the unconscious, and individuation.",
+    "zhDescription": "卡爾・榮格探討積極想像、潛意識與個體化歷程的深度心理學巨著。"
   }
 ]

@@ -248,9 +248,10 @@
     .speechPlayer button { padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font-weight: 700; cursor: pointer; }
     .speechPlayer small { font-size: 11px; color: var(--muted); }
   </style>
-  <!-- 載入專案內兩篇經典文獻與書籍資料 (免 AJAX CORS 限制) -->
+  <!-- 載入專案內三篇經典文獻與書籍資料 (免 AJAX CORS 限制) -->
   <script src="./source_materials/psychology-money/book-data-v5.js"></script>
   <script src="./source_materials/positive-psychology-progress/ppp-data.js"></script>
+  <script src="./source_materials/red-book/red-book-data.js"></script>
 </head>
 <body>
 
@@ -474,6 +475,17 @@
         year: 2005,
         pdfTotalPages: 19,
         getData: () => window.PPP_DATA
+      },
+      {
+        id: "red-book",
+        type: "book",
+        title: "The Red Book: Liber Novus",
+        zhTitle: "紅書：新書",
+        author: "C. G. Jung",
+        zhAuthor: "卡爾・古斯塔夫・榮格",
+        year: 2009,
+        pdfTotalPages: 404,
+        getData: () => window.RED_BOOK_DATA
       }
     ];
 
