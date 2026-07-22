@@ -2,8 +2,8 @@
 
 ## Repository & Storage
 - Local Path: `D:\Sharing\SHINE_AI_OS\Psychology-Money-Reader-v11-source`
-- Public GitHub URL: https://github.com/Yunkumom/psychology-money-reader
-- Live GitHub Pages URL: https://yunkumom.github.io/psychology-money-reader/
+- Public GitHub URL: https://github.com/Yunkumom/reader
+- Live GitHub Pages URL: https://yunkumom.github.io/reader/
 
 ## Architecture & Rebuilding Instructions
 - Standalone HTML reader entry: `index.html`
