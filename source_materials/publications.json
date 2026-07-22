@@ -1,0 +1,28 @@
+[
+  {
+    "id": "psychology-money",
+    "type": "book",
+    "title": "The Psychology of Money",
+    "zhTitle": "金錢心理學",
+    "author": "Morgan Housel",
+    "zhAuthor": "摩根・豪瑟",
+    "year": 2020,
+    "pdfTotalPages": 242,
+    "manifestUrl": "/book/v5/manifest.json",
+    "description": "Timeless lessons on wealth, greed, and happiness.",
+    "zhDescription": "關於財富、貪婪與幸福的恆久課題。"
+  },
+  {
+    "id": "positive-psychology-progress",
+    "type": "paper",
+    "title": "Positive Psychology Progress: Empirical Validation of Interventions",
+    "zhTitle": "正向心理學的進展：介入措施的實證驗證",
+    "author": "Martin E. P. Seligman, Tracy A. Steen, Nansook Park & Christopher Peterson",
+    "zhAuthor": "馬丁・塞利格曼、崔西・斯汀、朴南淑與克里斯多福・彼得森",
+    "year": 2005,
+    "pdfTotalPages": 19,
+    "manifestUrl": "/book/positive-psychology-progress/manifest.json",
+    "description": "A randomized controlled study of positive-psychology interventions and lasting happiness.",
+    "zhDescription": "以隨機對照研究檢驗正向心理學介入與持久幸福感。"
+  }
+]

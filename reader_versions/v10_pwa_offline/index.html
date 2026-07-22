@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="eye" data-font="serif">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Bilingual Reader v11｜金錢心理學與正向心理學研究 雙語閱讀器</title>
+  <link rel="icon" href="./public/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="./public/manifest.webmanifest">
+  <meta name="theme-color" content="#f2ead8">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    :root {
+      --font-size: 21px;
+      --line-height: 1.82;
+      --measure: 720px;
+      --ui-height: 58px;
+      --serif-en: Charter, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+      --serif-zh: "Songti TC", "Noto Serif TC", "PMingLiU", serif;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Noto Sans TC", sans-serif;
+    }
+
+    html[data-theme="light"] {
+      --bg: #fbfaf7; --surface: #ffffff; --text: #25272a; --muted: #6f7479;
+      --line: #e5e2dc; --accent: #1877d2; --zh: #087d54; --zh-bg: #eef8f3;
+      --shadow: 0 8px 30px rgba(20, 20, 20, .10); color-scheme: light;
+    }
+
+    html[data-theme="eye"] {
+      --bg: #f2ead8; --surface: #faf4e7; --text: #39352e; --muted: #777064;
+      --line: #ded1b8; --accent: #326d6a; --zh: #167451; --zh-bg: #e5efdf;
+      --shadow: 0 8px 30px rgba(67, 51, 25, .12); color-scheme: light;
+    }
+
+    html[data-theme="dark"] {
+      --bg: #0d1526; --surface: #172235; --text: #d7deea; --muted: #8e9aae;
+      --line: #2c3b52; --accent: #4a91ff; --zh: #45dc88; --zh-bg: #17283a;
+      --shadow: 0 8px 34px rgba(0, 0, 0, .36); color-scheme: dark;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; min-height: 100vh; background: var(--bg); color: var(--text);
+      font-family: var(--sans); transition: background .18s ease, color .18s ease;
+      -webkit-text-size-adjust: 100%;
+    }
+
+    /* Top Nav Bar */
+    .topbar {
+      position: fixed; z-index: 50; top: 0; left: 0; right: 0; height: calc(var(--ui-height) + env(safe-area-inset-top));
+      padding: env(safe-area-inset-top) max(12px, env(safe-area-inset-right)) 0 max(12px, env(safe-area-inset-left));
+      display: grid; grid-template-columns: 44px minmax(0, 1fr) repeat(4, 44px); align-items: center; gap: 4px;
+      background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+    }
+    .iconButton {
+      width: 44px; height: 44px; padding: 0; border: 0; border-radius: 12px;
+      display: grid; place-items: center; background: transparent; color: var(--text);
+      font-weight: 780; cursor: pointer; font-size: 16px;
+    }
+    .iconButton:active, .iconButton.active { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); }
+    .locationButton {
+      min-width: 0; height: 48px; padding: 4px 6px; border: 0; border-radius: 12px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: transparent; color: var(--text); cursor: pointer;
+    }
+    .locationButton:active, .locationButton[aria-expanded="true"] { background: var(--surface); }
+    .locationTitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 760; }
+    .locationButton small { max-width: 100%; margin-top: 2px; overflow: hidden; color: var(--muted); text-overflow: ellipsis; white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums; }
+
+    .progressTrack { position: fixed; z-index: 51; top: calc(var(--ui-height) + env(safe-area-inset-top)); left: 0; right: 0; height: 3px; background: var(--line); }
+    .progressBar { height: 100%; background: var(--accent); transition: width .08s linear; width: 0%; }
+
+    /* Reader Main Layout */
+    .reader { width: min(var(--measure), calc(100% - 34px)); margin: 0 auto; padding: calc(var(--ui-height) + env(safe-area-inset-top) + 20px) 0 calc(100px + env(safe-area-inset-bottom)); }
+    
+    /* Compact Cover Card - Space Saving Header */
+    .bookCover {
+      padding: 16px 20px; margin-bottom: 24px; text-align: center; background: var(--surface);
+      border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow);
+    }
+    .eyebrow { margin: 0 0 4px; color: var(--accent); font-size: 10px; font-weight: 780; letter-spacing: .14em; text-transform: uppercase; }
+    .bookCover h1 { margin: 0; font: 720 clamp(22px, 5vw, 32px)/1.2 var(--serif-en); letter-spacing: -.02em; }
+    .zhCover { margin: 4px 0 0; color: var(--zh); font: 650 clamp(16px, 4vw, 22px)/1.3 var(--serif-zh); }
+    .author { margin: 8px 0 0; color: var(--muted); font-size: 13px; font-weight: 500; }
+
+    /* Floating Edge Navigation Buttons - Hidden by default for immersive reading view */
+    .edgeNavBtn {
+      position: fixed; z-index: 45; top: 50%;
+      width: 46px; height: 58px; border-radius: 14px; border: 1px solid var(--line);
+      background: color-mix(in srgb, var(--surface) 92%, transparent); color: var(--text);
+      display: grid; place-items: center; font-size: 20px; font-weight: 800; cursor: pointer;
+      box-shadow: var(--shadow); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      transition: opacity .25s ease, transform .25s ease, visibility .25s;
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+    .edgeNavBtn.show {
+      opacity: 1; visibility: visible; pointer-events: auto;
+    }
+    .edgeNavBtn.left { left: max(10px, env(safe-area-inset-left)); transform: translateY(-50%) translateX(-6px); }
+    .edgeNavBtn.right { right: max(10px, env(safe-area-inset-right)); transform: translateY(-50%) translateX(6px); }
+    .edgeNavBtn.show.left, .edgeNavBtn.show.right { transform: translateY(-50%) translateX(0); }
+
+    .edgeNavBtn:hover:not(:disabled) { background: var(--accent); color: white; border-color: var(--accent); }
+    .edgeNavBtn:active:not(:disabled) { transform: translateY(-50%) scale(0.94); }
+    .edgeNavBtn:disabled { opacity: 0.25 !important; pointer-events: none !important; }
+
+    /* Paragraph Pair & Controls */
+    .pair { position: relative; margin: 0 0 1.6em; border-radius: 14px; scroll-margin-top: calc(var(--ui-height) + env(safe-area-inset-top) + 18px); padding: 10px 14px; transition: padding-top .16s ease, background .16s ease; cursor: pointer; }
+    .pair:hover { background: color-mix(in srgb, var(--surface) 50%, transparent); }
+    .pair.controlsVisible { padding-top: 52px; background: linear-gradient(to bottom, color-mix(in srgb, var(--surface) 58%, transparent) 46px, transparent 46px); }
+    
+    .paragraphControls { position: absolute; z-index: 4; top: 6px; right: 8px; display: flex; gap: 6px; opacity: 0; visibility: hidden; pointer-events: none; transform: translateY(-3px); transition: opacity .14s ease, transform .14s ease, visibility .14s; }
+    .pair.controlsVisible > .paragraphControls { opacity: 1; visibility: visible; pointer-events: auto; transform: none; }
+    
+    .speakButton, .translateButton {
+      width: 40px; height: 40px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--text);
+      display: grid; place-items: center; font-weight: 700; cursor: pointer; font-size: 15px; box-shadow: var(--shadow);
+    }
+    .pair.open > .paragraphControls > .translateButton, html.showAll .pair > .paragraphControls > .translateButton {
+      border-color: var(--accent); background: var(--accent); color: white;
+    }
+
+    .english { user-select: text; }
+    .enText { margin: 0; white-space: pre-line; overflow-wrap: anywhere; font-family: var(--serif-en); font-size: var(--font-size); line-height: var(--line-height); letter-spacing: .003em; }
+    html[data-font="sans"] .enText { font-family: var(--sans); }
+    
+    /* Chinese Translation Block - Appears Directly Below as Next Paragraph Block */
+    .translation { margin-top: 14px; display: none; }
+    .pair.open .translation, html.showAll .translation { display: block !important; }
+    .zhText {
+      margin: 0; white-space: pre-line; overflow-wrap: anywhere;
+      font-family: var(--serif-zh); font-size: calc(var(--font-size) * 0.92); line-height: var(--line-height);
+      color: var(--zh); background: var(--zh-bg); padding: 14px 18px; border-radius: 12px;
+      border-left: 4px solid var(--zh); box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+    }
+
+    /* Chapter Footer Navigation - Next & Prev Chapter Buttons */
+    .chapterNavFooter {
+      margin-top: 48px; padding-top: 24px; border-top: 2px dashed var(--line);
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; align-items: center;
+    }
+    .chapterNavFooter .navBtn {
+      padding: 14px 10px; border: 1px solid var(--line); border-radius: 12px;
+      background: var(--surface); color: var(--text); font-size: 14px; font-weight: 760;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px;
+      box-shadow: var(--shadow); transition: all 0.15s ease;
+    }
+    .chapterNavFooter .navBtn.next {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
+    .chapterNavFooter .navBtn:disabled {
+      opacity: 0.4; cursor: not-allowed; pointer-events: none;
+    }
+    .chapterNavFooter .navBtn:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+
+    .sentence { transition: background 0.15s ease; border-radius: 3px; }
+    .sentence.speaking { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+    /* Figures & Tables for Research Papers */
+    .sourceFigure { margin: 20px 0; text-align: center; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px; box-shadow: var(--shadow); }
+    .sourceFigure img { max-width: 100%; height: auto; border-radius: 8px; display: block; margin: 0 auto 10px; }
+    .sourceFigure figcaption { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+    /* Slide Panels / Drawers */
+    .scrim { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,0.42); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .24s ease, visibility .24s; visibility: hidden; }
+    .scrim.show { opacity: 1; pointer-events: auto; visibility: visible; }
+    
+    .panel {
+      position: fixed; z-index: 100; top: 0; bottom: 0; right: 0; left: auto;
+      width: min(440px, 88vw); background: var(--surface);
+      box-shadow: var(--shadow); border-left: 1px solid var(--line);
+      padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+      overflow-y: auto; transform: translateX(100%); transition: transform .24s cubic-bezier(0.16, 1, 0.3, 1), visibility .24s;
+      visibility: hidden; pointer-events: none;
+    }
+    .panel.left { left: 0; right: auto; border-left: 0; border-right: 1px solid var(--line); transform: translateX(-100%); }
+    .panel.show { transform: translateX(0); visibility: visible; pointer-events: auto; }
+    
+    .panelHead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid var(--line); }
+    .panelHead h2 { margin: 0; font-size: 18px; font-weight: 780; }
+    
+    /* Enhanced Close Button with High Hit Target */
+    .closeButton {
+      width: 40px; height: 40px; border: 1.5px solid var(--line); border-radius: 12px;
+      background: var(--surface); color: var(--text); font-size: 18px; font-weight: 700;
+      cursor: pointer; display: grid; place-items: center; transition: all 0.15s ease;
+      flex-shrink: 0; box-shadow: var(--shadow);
+    }
+    .closeButton:hover, .closeButton:active {
+      background: var(--accent); color: white; border-color: var(--accent);
+    }
+
+    /* Progressive & Offline Status Badge */
+    .offlineStatusBadge {
+      margin-top: 6px; font-size: 12px; font-weight: 700; color: var(--accent);
+      display: flex; align-items: center; gap: 6px; background: color-mix(in srgb, var(--accent) 10%, transparent);
+      padding: 6px 12px; border-radius: 8px; border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
+    }
+
+    /* Library & Publications Switcher */
+    .publicationSection { margin-bottom: 24px; }
+    .publicationSection h3 { font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin: 0 0 10px; }
+    .publicationCard {
+      width: 100%; text-align: left; padding: 14px; margin-bottom: 10px; border-radius: 12px; border: 1.5px solid var(--line);
+      background: var(--bg); color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 4px; transition: all 0.15s ease;
+    }
+    .publicationCard:hover { border-color: var(--accent); }
+    .publicationCard.selected { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 12%, transparent); }
+    .publicationType { font-size: 10px; font-weight: 800; color: var(--accent); letter-spacing: 0.06em; }
+    .publicationCard strong { font-size: 14px; font-weight: 760; line-height: 1.25; }
+    .publicationCard em { font-size: 13px; font-style: normal; color: var(--zh); }
+    .publicationCard small { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    .chapterLink {
+      width: 100%; text-align: left; padding: 12px 14px; margin-bottom: 6px; border: 0; border-radius: 10px;
+      background: transparent; color: var(--text); cursor: pointer; display: flex; flex-direction: column; gap: 2px;
+    }
+    .chapterLink:hover, .chapterLink.active { background: color-mix(in srgb, var(--accent) 14%, transparent); color: var(--accent); font-weight: 700; }
+    .chapterLink small { font-size: 12px; color: var(--muted); display: flex; justify-content: space-between; }
+
+    /* Settings Controls */
+    .setting { margin-bottom: 20px; }
+    .settingRow { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 14px; font-weight: 700; }
+    .segments { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .segments button { padding: 9px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 10px; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .segments button.selected { border-color: var(--accent); background: var(--accent); color: white; }
+
+    /* Nav Drawer Search & Bookmarks */
+    .navActions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 18px; }
+    .navActions button { padding: 10px 6px; border: 1px solid var(--line); background: var(--bg); color: var(--text); border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 13px; text-align: center; }
+    .navActions button.selected { border-color: var(--accent); background: var(--accent); color: white; }
+    .searchBox input { width: 100%; padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); margin-top: 6px; }
+    .searchResultItem { width: 100%; text-align: left; padding: 10px; border-bottom: 1px solid var(--line); background: transparent; border: 0; cursor: pointer; display: flex; flex-direction: column; gap: 4px; }
+    .searchResultItem:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+    .searchResultItem small { font-size: 11px; color: var(--accent); font-weight: 700; }
+    .searchResultItem span { font-size: 13px; }
+    .searchResultItem em { font-size: 12px; color: var(--zh); font-style: normal; }
+
+    /* Speech Player Bar */
+    .speechPlayer {
+      position: fixed; z-index: 80; bottom: calc(20px + env(safe-area-inset-bottom)); left: 50%; transform: translateX(-50%); width: min(400px, 90vw);
+      background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 10px 16px;
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; box-shadow: var(--shadow);
+    }
+    .speechPlayer button { padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font-weight: 700; cursor: pointer; }
+    .speechPlayer small { font-size: 11px; color: var(--muted); }
+  </style>
+  <!-- 載入專案內兩篇經典文獻與書籍資料 (免 AJAX CORS 限制) -->
+  <script src="./app/book-data-v5.js"></script>
+  <script src="./public/book/positive-psychology-progress/ppp-data.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="topbar">
+    <button class="iconButton" title="書庫與目錄 (Library & Contents)" onclick="togglePanel('tocPanel', event)">▦</button>
+    <button class="locationButton" onclick="togglePanel('navPanel', event)">
+      <span class="locationTitle" id="navChapterTitle">The Psychology of Money</span>
+      <small id="navProgress">Loading reader...</small>
+    </button>
+    <button class="iconButton" id="btnToggleAll" title="切換對照顯示 (Show/Hide Chinese)" onclick="toggleShowAll()">文</button>
+    <button class="iconButton" title="全篇搜尋與書籤 (Search & Bookmarks)" onclick="togglePanel('navPanel', event)">⌕</button>
+    <button class="iconButton" title="閱讀偏好設定 (Settings)" onclick="togglePanel('settingsPanel', event)">Aa</button>
+    <button class="iconButton" title="切換閱讀模式 (Theme)" onclick="cycleTheme()">◐</button>
+  </header>
+  <div class="progressTrack"><div class="progressBar" id="progressBar"></div></div>
+
+  <!-- Floating Edge Navigation Buttons (Shown only after tapping screen, auto-hide while reading) -->
+  <button type="button" class="edgeNavBtn left" id="edgePrevBtn" onclick="prevChapter()" title="上一章 (Previous Chapter)">❮</button>
+  <button type="button" class="edgeNavBtn right" id="edgeNextBtn" onclick="nextChapter()" title="下一章 (Next Chapter)">❯</button>
+
+  <div class="scrim" id="scrim" onclick="closePanels(event)"></div>
+
+  <!-- TOC & Library Selection Panel -->
+  <aside class="panel left" id="tocPanel">
+    <div class="panelHead">
+      <div>
+        <h2>Library & Contents｜書庫與目錄</h2>
+        <div class="offlineStatusBadge" id="offlineProgressBadge">⚡ 離線漸進快取準備中...</div>
+      </div>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
+    </div>
+    
+    <div class="publicationSection">
+      <h3>Publications｜文獻與刊物</h3>
+      <div id="publicationList"></div>
+    </div>
+
+    <h3 style="font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; margin: 20px 0 10px;">
+      Current Contents｜目前刊物目錄
+    </h3>
+    <nav id="tocList"></nav>
+  </aside>
+
+  <!-- Book Navigation, Search & Bookmarks Panel -->
+  <aside class="panel" id="navPanel">
+    <div class="panelHead">
+      <h2>Book Navigation｜書籍導覽與搜尋</h2>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
+    </div>
+
+    <div class="navActions">
+      <button onclick="prevChapter()">← 上一章</button>
+      <button id="btnBookmark" onclick="toggleBookmark()">☆ 書籤</button>
+      <button onclick="nextChapter()">下一章 →</button>
+    </div>
+
+    <div class="setting searchBox">
+      <div class="settingRow"><label>Search｜全文中英文搜尋</label></div>
+      <input type="search" id="searchInput" placeholder="Money, happiness, 財富、幸福感…" oninput="handleSearch(this.value)">
+    </div>
+
+    <div id="searchResults" style="margin-bottom: 20px;"></div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Bookmarks｜我的書籤</label></div>
+      <div id="bookmarkList" style="font-size: 13px; color: var(--muted);">尚無標記書籤</div>
+    </div>
+  </aside>
+
+  <!-- Reader Settings Panel -->
+  <aside class="panel" id="settingsPanel">
+    <div class="panelHead">
+      <h2>Reading Settings｜閱讀偏好設定</h2>
+      <button type="button" class="closeButton" onclick="closePanels(event)" aria-label="Close panel">✕</button>
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Text size｜字體大小</label><strong id="fontSizeVal">21 px</strong></div>
+      <div class="segments" style="grid-template-columns: 1fr 2fr 1fr;">
+        <button onclick="changeFontSize(-1)">A−</button>
+        <input type="range" min="16" max="32" value="21" id="fontSizeRange" style="width:100%" oninput="setFontSize(this.value)">
+        <button onclick="changeFontSize(1)">A+</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Line spacing｜行距</label><span id="lineHeightVal">1.82</span></div>
+      <input type="range" min="1.5" max="2.1" step="0.04" value="1.82" style="width:100%" oninput="setLineHeight(this.value)">
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Typeface｜字體風格</label></div>
+      <div class="segments">
+        <button id="font-serif" class="selected" onclick="setFont('serif')">襯線體</button>
+        <button id="font-sans" onclick="setFont('sans')">無襯線</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Page width｜頁面寬度</label></div>
+      <div class="segments">
+        <button id="width-620" onclick="setWidth(620)">窄</button>
+        <button id="width-720" class="selected" onclick="setWidth(720)">標準</button>
+        <button id="width-840" onclick="setWidth(840)">寬</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Theme｜閱讀模式</label></div>
+      <div class="segments">
+        <button id="theme-eye" class="selected" onclick="setTheme('eye')">護眼</button>
+        <button id="theme-light" onclick="setTheme('light')">日間</button>
+        <button id="theme-dark" onclick="setTheme('dark')">夜間</button>
+      </div>
+    </div>
+
+    <div class="setting">
+      <div class="settingRow"><label>Voice speed｜語音朗讀速度</label><span id="speechRateVal">1.00×</span></div>
+      <input type="range" min="0.75" max="1.5" step="0.05" value="1.00" style="width:100%" oninput="setSpeechRate(this.value)">
+    </div>
+
+    <p style="font-size: 12px; color: var(--muted); line-height: 1.5; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--line);">
+      💡 沉浸式提示：閱讀時翻頁按鈕自動隱藏，點擊螢幕即可顯示 ❮ ❯ 兩側翻頁圖示，4秒後自動恢復純淨閱讀。
+    </p>
+  </aside>
+
+  <!-- Reader Main Canvas -->
+  <main class="reader" id="readerCanvas">
+    <div id="loading" style="text-align: center; padding: 80px 0; color: var(--muted);">
+      ⏳ 正在載入文獻資料...
+    </div>
+    <div id="readerContent"></div>
+  </main>
+
+  <!-- Speech Player Bar -->
+  <div class="speechPlayer" id="speechPlayer" style="display:none;">
+    <button onclick="stopSpeech()">■ 停止</button>
+    <small id="speechInfo">EN Speech</small>
+    <label style="font-size: 12px; display: flex; align-items: center; gap: 4px;">
+      <input type="checkbox" id="chkAutoSpeech" onchange="autoSpeech = this.checked"> 連續朗讀
+    </label>
+  </div>
+
+  <script>
+    /* Service Worker Registration for PWA Offline App */
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./public/sw.js?v=11', { scope: './' })
+        .then(reg => reg.update())
+        .catch(() => {});
+    }
+
+    /* IndexedDB Offline Storage Engine */
+    const DB_NAME = 'ReaderOfflineCacheDB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'publication_sections';
+
+    function openOfflineDB() {
+      return new Promise((resolve, reject) => {
+        if (!('indexedDB' in window)) { resolve(null); return; }
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+          }
+        };
+        req.onsuccess = (e) => resolve(e.target.result);
+        req.onerror = () => resolve(null);
+      });
+    }
+
+    async function saveSectionToOfflineDB(pubId, chapterIndex, sectionData) {
+      const db = await openOfflineDB();
+      if (!db) return;
+      try {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const key = `${pubId}_ch_${chapterIndex}`;
+        store.put({ key, pubId, chapterIndex, data: sectionData, timestamp: Date.now() });
+      } catch (err) {}
+    }
+
+    async function getSectionFromOfflineDB(pubId, chapterIndex) {
+      const db = await openOfflineDB();
+      if (!db) return null;
+      try {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const key = `${pubId}_ch_${chapterIndex}`;
+        return new Promise((resolve) => {
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result ? req.result.data : null);
+          req.onerror = () => resolve(null);
+        });
+      } catch (err) {
+        return null;
+      }
+    }
+
+    // System & Data Registry
+    const publications = [
+      {
+        id: "psychology-money",
+        type: "book",
+        title: "The Psychology of Money",
+        zhTitle: "金錢心理學",
+        author: "Morgan Housel",
+        zhAuthor: "摩根・豪瑟",
+        year: 2020,
+        pdfTotalPages: 242,
+        getData: () => window.BOOK_DATA
+      },
+      {
+        id: "positive-psychology-progress",
+        type: "paper",
+        title: "Positive Psychology Progress: Empirical Validation of Interventions",
+        zhTitle: "正向心理學的進展：介入措施的實證驗證",
+        author: "Martin E. P. Seligman, Tracy A. Steen, Nansook Park & Christopher Peterson",
+        zhAuthor: "馬丁・塞利格曼、崔西・斯汀、朴南淑與克里斯多福・彼得森",
+        year: 2005,
+        pdfTotalPages: 19,
+        getData: () => window.PPP_DATA
+      }
+    ];
+
+    let currentPubId = localStorage.getItem('pmr_pubId') || 'psychology-money';
+    let currentChapterIndex = 0;
+    let selectedPairId = "";
+    let showAllZh = false;
+    let autoSpeech = false;
+    let speechRate = 1.0;
+    let currentTheme = localStorage.getItem('pmr_theme') || 'eye';
+    let currentFont = localStorage.getItem('pmr_font') || 'serif';
+    let fontSize = parseInt(localStorage.getItem('pmr_fontSize') || '21');
+    let lineHeight = parseFloat(localStorage.getItem('pmr_lineHeight') || '1.82');
+    let measureWidth = parseInt(localStorage.getItem('pmr_width') || '720');
+    let bookmarks = JSON.parse(localStorage.getItem('pmr_bookmarks') || '[]');
+    let progressiveQueue = [];
+    let isProgressiveCaching = false;
+    let edgeNavTimer = null;
+
+    // Figures registry for Positive Psychology Progress paper
+    function getFiguresForPair(pairId) {
+      const base = "./public/book/positive-psychology-progress/figures";
+      if (pairId === "ppp-chapter-10-pair-0") return [{ src: `${base}/table-1.png`, caption: "Original PDF · Table 1: Classification of Character Strengths (品格優勢分類表)" }];
+      if (pairId === "ppp-chapter-6-pair-3" || pairId === "ppp-chapter-11-pair-0") return [{ src: `${base}/figure-1.png`, caption: "Original PDF · Figure 1: Steen Happiness Index scores over time (幸福感分數隨時間變化)" }];
+      if (pairId === "ppp-chapter-11-pair-2") return [{ src: `${base}/figure-2.png`, caption: "Original PDF · Figure 2: CES-D Depressive symptom scores over time (憂鬱症狀分數隨時間變化)" }];
+      return [];
+    }
+
+    // Initialize Layout & State
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.documentElement.setAttribute('data-font', currentFont);
+    document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+    document.documentElement.style.setProperty('--line-height', lineHeight);
+    document.documentElement.style.setProperty('--measure', measureWidth + 'px');
+
+    function initReader() {
+      renderPublicationList();
+      loadActivePublication();
+    }
+
+    function renderPublicationList() {
+      const el = document.getElementById('publicationList');
+      el.innerHTML = publications.map(pub => `
+        <div class="publicationCard ${pub.id === currentPubId ? 'selected' : ''}" onclick="selectPublication('${pub.id}')">
+          <span class="publicationType">${pub.type === 'book' ? 'BOOK｜書籍' : 'PAPER｜學術論文'}</span>
+          <strong>${pub.title}</strong>
+          <em>${pub.zhTitle}</em>
+          <small>${pub.author} · ${pub.year} · PDF ${pub.pdfTotalPages} 頁</small>
+        </div>
+      `).join('');
+    }
+
+    function selectPublication(id) {
+      if (currentPubId === id) return;
+      currentPubId = id;
+      localStorage.setItem('pmr_pubId', id);
+      currentChapterIndex = 0;
+      renderPublicationList();
+      loadActivePublication();
+      closePanels();
+    }
+
+    function getActivePubData() {
+      const pub = publications.find(p => p.id === currentPubId) || publications[0];
+      const raw = pub.getData();
+      if (!raw) return null;
+
+      if (raw.sections) {
+        return {
+          title: raw.title,
+          zhTitle: raw.zhTitle,
+          author: raw.author,
+          zhAuthor: raw.zhAuthor,
+          pdfTotalPages: pub.pdfTotalPages,
+          chapters: raw.sections.map((sec, idx) => ({
+            id: sec.id,
+            chapterIndex: idx,
+            enTitle: sec.enTitle,
+            zhTitle: sec.zhTitle,
+            pairs: sec.pairs.map((p, pIdx) => ({
+              id: `${sec.id}-p-${pIdx}`,
+              pairIndex: pIdx,
+              en: p.en,
+              zh: p.zh
+            }))
+          }))
+        };
+      } else if (raw.chapters) {
+        return {
+          title: raw.manifest.title,
+          zhTitle: raw.manifest.zhTitle,
+          author: raw.manifest.author,
+          zhAuthor: raw.manifest.zhAuthor,
+          pdfTotalPages: raw.manifest.pdfTotalPages,
+          chapters: raw.chapters
+        };
+      }
+      return null;
+    }
+
+    async function loadActivePublication() {
+      const data = getActivePubData();
+      if (!data) {
+        document.getElementById('loading').innerHTML = '⚠️ 無法載入刊物資料，請重新整理。';
+        return;
+      }
+
+      document.getElementById('loading').style.display = 'none';
+      renderTOC(data);
+
+      const cachedSection0 = await getSectionFromOfflineDB(currentPubId, 0);
+      if (cachedSection0) {
+        renderChapterWithData(data, 0, cachedSection0);
+      } else {
+        renderChapter(data, currentChapterIndex);
+        saveSectionToOfflineDB(currentPubId, 0, data.chapters[0]);
+      }
+
+      renderBookmarks();
+      startProgressiveCache(data);
+    }
+
+    async function startProgressiveCache(data) {
+      progressiveQueue = [];
+      const total = data.chapters.length;
+
+      for (let i = 0; i < total; i++) {
+        const cached = await getSectionFromOfflineDB(currentPubId, i);
+        if (!cached) {
+          progressiveQueue.push(i);
+        }
+      }
+
+      if (progressiveQueue.length === 0) {
+        updateOfflineBadge(total, total, true);
+      } else if (!isProgressiveCaching) {
+        processProgressiveQueue(data);
+      }
+    }
+
+    async function processProgressiveQueue(data) {
+      const total = data.chapters.length;
+      if (progressiveQueue.length === 0) {
+        isProgressiveCaching = false;
+        updateOfflineBadge(total, total, true);
+        return;
+      }
+
+      isProgressiveCaching = true;
+      const chIdx = progressiveQueue.shift();
+      const chapterObj = data.chapters[chIdx];
+      
+      if (chapterObj) {
+        await saveSectionToOfflineDB(currentPubId, chIdx, chapterObj);
+        const done = total - progressiveQueue.length;
+        updateOfflineBadge(done, total, false);
+      }
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => processProgressiveQueue(data), { timeout: 1000 });
+      } else {
+        setTimeout(() => processProgressiveQueue(data), 120);
+      }
+    }
+
+    function updateOfflineBadge(doneCount, totalCount, isComplete) {
+      const badge = document.getElementById('offlineProgressBadge');
+      if (!badge) return;
+      if (isComplete) {
+        badge.innerHTML = `✓ 本機已可全篇離線閱讀 (${totalCount}/${totalCount} 章)`;
+        badge.style.color = 'var(--zh)';
+      } else {
+        badge.innerHTML = `⚡ 離線漸進快取中... (${doneCount}/${totalCount} 章)`;
+        badge.style.color = 'var(--accent)';
+      }
+    }
+
+    function renderTOC(data) {
+      const el = document.getElementById('tocList');
+      el.innerHTML = data.chapters.map((ch, idx) => `
+        <button class="chapterLink ${idx === currentChapterIndex ? 'active' : ''}" onclick="goToChapter(${idx})">
+          <span>${ch.enTitle}</span>
+          <small><span>${ch.zhTitle}</span> <b>${idx === currentChapterIndex ? '▶' : ''}</b></small>
+        </button>
+      `).join('');
+    }
+
+    async function goToChapter(idx) {
+      const data = getActivePubData();
+      if (!data || !data.chapters[idx]) return;
+      currentChapterIndex = idx;
+      renderTOC(data);
+
+      const cached = await getSectionFromOfflineDB(currentPubId, idx);
+      if (cached) {
+        renderChapterWithData(data, idx, cached);
+      } else {
+        renderChapter(data, idx);
+        saveSectionToOfflineDB(currentPubId, idx, data.chapters[idx]);
+      }
+
+      closePanels();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function prevChapter() { if (currentChapterIndex > 0) goToChapter(currentChapterIndex - 1); }
+    function nextChapter() {
+      const data = getActivePubData();
+      if (data && currentChapterIndex < data.chapters.length - 1) goToChapter(currentChapterIndex + 1);
+    }
+
+    function renderChapter(data, idx) {
+      renderChapterWithData(data, idx, data.chapters[idx]);
+    }
+
+    function updateEdgeNavButtons(data, idx) {
+      const leftBtn = document.getElementById('edgePrevBtn');
+      const rightBtn = document.getElementById('edgeNextBtn');
+      if (leftBtn) leftBtn.disabled = (idx === 0);
+      if (rightBtn) rightBtn.disabled = (idx === data.chapters.length - 1);
+    }
+
+    function toggleEdgeNav(forceShow) {
+      const leftBtn = document.getElementById('edgePrevBtn');
+      const rightBtn = document.getElementById('edgeNextBtn');
+      if (!leftBtn || !rightBtn) return;
+
+      const shouldShow = (typeof forceShow === 'boolean') ? forceShow : !leftBtn.classList.contains('show');
+
+      leftBtn.classList.toggle('show', shouldShow);
+      rightBtn.classList.toggle('show', shouldShow);
+
+      if (edgeNavTimer) clearTimeout(edgeNavTimer);
+
+      if (shouldShow) {
+        edgeNavTimer = setTimeout(() => {
+          leftBtn.classList.remove('show');
+          rightBtn.classList.remove('show');
+        }, 4000);
+      }
+    }
+
+    function renderChapterWithData(data, idx, ch) {
+      document.getElementById('navChapterTitle').innerText = ch.enTitle;
+      document.getElementById('navProgress').innerText = `${data.title} · 第 ${idx + 1}/${data.chapters.length} 章`;
+      updateEdgeNavButtons(data, idx);
+
+      let html = '';
+      if (idx === 0) {
+        html += `
+          <header class="bookCover">
+            <div class="eyebrow">Bilingual Research & Literature Edition</div>
+            <h1>${data.title}</h1>
+            <div class="zhCover">${data.zhTitle}</div>
+            <div class="author">${data.author}｜${data.zhAuthor}</div>
+          </header>
+        `;
+      }
+
+      html += `
+        <section class="chapter">
+          <header style="margin-bottom: 24px; padding-bottom: 14px; border-bottom: 2px solid var(--line);">
+            <h2 style="font-family: var(--serif-en); margin: 0; font-size: 26px;">${ch.enTitle}</h2>
+            <h3 style="font-family: var(--serif-zh); margin: 6px 0 0; color: var(--zh); font-size: 19px;">${ch.zhTitle}</h3>
+          </header>
+      `;
+
+      ch.pairs.forEach((pair, pIdx) => {
+        const figures = getFiguresForPair(pair.id);
+        let figuresHtml = '';
+        figures.forEach(fig => {
+          figuresHtml += `<figure class="sourceFigure"><img src="${fig.src}" alt="Figure"><figcaption>${fig.caption}</figcaption></figure>`;
+        });
+
+        html += `
+          <article class="pair" id="${pair.id}">
+            ${figuresHtml}
+            <div class="paragraphControls">
+              <button type="button" class="speakButton" title="朗讀英文">🔊</button>
+              <button type="button" class="translateButton" title="對照中文">中</button>
+            </div>
+            <div class="english">
+              <p class="enText">${pair.en}</p>
+            </div>
+            <div class="translation">
+              <p class="zhText">${pair.zh}</p>
+            </div>
+          </article>
+        `;
+      });
+
+      const isFirst = idx === 0;
+      const isLast = idx === data.chapters.length - 1;
+
+      html += `
+        </section>
+        <footer class="chapterNavFooter">
+          <button type="button" class="navBtn prev" onclick="prevChapter()" ${isFirst ? 'disabled' : ''}>
+            ← 上一章 (Prev)
+          </button>
+          <button type="button" class="navBtn toc" onclick="togglePanel('tocPanel', event)">
+            ▦ 目錄 (TOC)
+          </button>
+          <button type="button" class="navBtn next" onclick="nextChapter()" ${isLast ? 'disabled' : ''}>
+            ${isLast ? '已到末章' : '下一章 (Next) →'}
+          </button>
+        </footer>
+      `;
+
+      document.getElementById('readerContent').innerHTML = html;
+      updateProgressBar();
+    }
+
+    /* Event Delegation Engine for Bulletproof Paragraph Taps & Tap-to-Reveal Navigation */
+    let pairTapTimer = null;
+
+    document.getElementById('readerCanvas').addEventListener('click', function(e) {
+      const pairEl = e.target.closest('article.pair');
+
+      // Always reveal edge navigation controls on screen tap
+      toggleEdgeNav(true);
+
+      if (!pairEl) return;
+
+      const isSpeakBtn = e.target.closest('.speakButton');
+      const isTranslateBtn = e.target.closest('.translateButton');
+
+      if (isSpeakBtn) {
+        e.stopPropagation();
+        const enText = pairEl.querySelector('.enText')?.innerText || '';
+        speakParagraph(enText);
+        return;
+      }
+
+      if (isTranslateBtn) {
+        e.stopPropagation();
+        togglePairElement(pairEl);
+        return;
+      }
+
+      // Handle single tap (toggle Chinese translation & controls) or double tap (read aloud)
+      if (e.detail >= 2) {
+        if (pairTapTimer) { clearTimeout(pairTapTimer); pairTapTimer = null; }
+        const enText = pairEl.querySelector('.enText')?.innerText || '';
+        speakParagraph(enText);
+        return;
+      }
+
+      if (pairTapTimer) clearTimeout(pairTapTimer);
+      pairTapTimer = setTimeout(() => {
+        pairTapTimer = null;
+        togglePairElement(pairEl);
+      }, 220);
+    });
+
+    function togglePairElement(pairEl) {
+      document.querySelectorAll('article.pair.controlsVisible').forEach(item => {
+        if (item !== pairEl) item.classList.remove('controlsVisible');
+      });
+      pairEl.classList.add('controlsVisible');
+      selectedPairId = pairEl.id;
+
+      // Toggle open class for Chinese translation block
+      pairEl.classList.toggle('open');
+    }
+
+    function toggleShowAll() {
+      showAllZh = !showAllZh;
+      document.documentElement.classList.toggle('showAll', showAllZh);
+      document.getElementById('btnToggleAll').classList.toggle('active', showAllZh);
+    }
+
+    /* Speech Synthesis Engine */
+    function speakParagraph(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'en-US';
+      utterance.rate = speechRate;
+      
+      utterance.onstart = () => {
+        document.getElementById('speechPlayer').style.display = 'flex';
+        document.getElementById('speechInfo').innerText = 'EN Playing...';
+      };
+      utterance.onend = () => {
+        document.getElementById('speechPlayer').style.display = 'none';
+      };
+      window.speechSynthesis.speak(utterance);
+    }
+
+    function stopSpeech() {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      document.getElementById('speechPlayer').style.display = 'none';
+    }
+
+    /* Search & Bookmarks */
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      const container = document.getElementById('searchResults');
+      if (q.length < 2) { container.innerHTML = ''; return; }
+
+      const data = getActivePubData();
+      if (!data) return;
+
+      const results = [];
+      data.chapters.forEach((ch, cIdx) => {
+        ch.pairs.forEach((p, pIdx) => {
+          if (p.en.toLowerCase().includes(q) || p.zh.toLowerCase().includes(q)) {
+            results.push({ chapterIndex: cIdx, pairId: p.id, en: p.en, zh: p.zh, chapterTitle: ch.enTitle });
+          }
+        });
+      });
+
+      container.innerHTML = `
+        <div style="font-size:12px; font-weight:700; color:var(--accent); margin-bottom:8px;">搜尋結果 (${results.length})</div>
+        ${results.slice(0, 20).map(item => `
+          <button class="searchResultItem" onclick="goToSearchResult(${item.chapterIndex}, '${item.pairId}')">
+            <small>${item.chapterTitle}</small>
+            <span>${item.en.slice(0, 90)}...</span>
+            <em>${item.zh.slice(0, 90)}...</em>
+          </button>
+        `).join('')}
+      `;
+    }
+
+    function goToSearchResult(cIdx, pairId) {
+      goToChapter(cIdx).then(() => {
+        setTimeout(() => {
+          const el = document.getElementById(pairId);
+          if (el) {
+            el.scrollIntoView({ block: 'start', behavior: 'smooth' });
+            togglePairElement(el);
+          }
+        }, 150);
+      });
+    }
+
+    function toggleBookmark() {
+      if (!selectedPairId) return;
+      if (bookmarks.includes(selectedPairId)) {
+        bookmarks = bookmarks.filter(id => id !== selectedPairId);
+      } else {
+        bookmarks.push(selectedPairId);
+      }
+      localStorage.setItem('pmr_bookmarks', JSON.stringify(bookmarks));
+      renderBookmarks();
+    }
+
+    function renderBookmarks() {
+      const el = document.getElementById('bookmarkList');
+      if (!bookmarks.length) { el.innerHTML = '尚無標記書籤'; return; }
+      el.innerHTML = bookmarks.map(id => `<div style="padding:4px 0;">★ ${id}</div>`).join('');
+    }
+
+    /* Robust Panels & UI Controls */
+    function togglePanel(id, e) {
+      if (e) e.stopPropagation();
+      const p = document.getElementById(id);
+      if (!p) return;
+      const isOpen = p.classList.contains('show');
+      closePanels();
+      if (!isOpen) {
+        p.classList.add('show');
+        document.getElementById('scrim').classList.add('show');
+      }
+    }
+
+    function closePanels(e) {
+      if (e) e.stopPropagation();
+      document.querySelectorAll('.panel.show').forEach(p => p.classList.remove('show'));
+      const scrim = document.getElementById('scrim');
+      if (scrim) scrim.classList.remove('show');
+    }
+
+    // Global Event Listeners for ESC key and Outside clicks
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePanels(e);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      const openPanel = document.querySelector('.panel.show');
+      if (!openPanel) return;
+      const isInsidePanel = openPanel.contains(e.target);
+      const isTriggerBtn = e.target.closest('.iconButton') || e.target.closest('.locationButton');
+      if (!isInsidePanel && !isTriggerBtn) {
+        closePanels(e);
+      }
+    });
+
+    function cycleTheme() {
+      const themes = ['eye', 'light', 'dark'];
+      const next = themes[(themes.indexOf(currentTheme) + 1) % themes.length];
+      setTheme(next);
+    }
+
+    function setTheme(t) {
+      currentTheme = t;
+      document.documentElement.setAttribute('data-theme', t);
+      localStorage.setItem('pmr_theme', t);
+      document.querySelectorAll('#settingsPanel .segments button[id^="theme-"]').forEach(btn => {
+        btn.classList.toggle('selected', btn.id === `theme-${t}`);
+      });
+    }
+
+    function setFont(f) {
+      currentFont = f;
+      document.documentElement.setAttribute('data-font', f);
+      localStorage.setItem('pmr_font', f);
+      document.getElementById('font-serif').classList.toggle('selected', f === 'serif');
+      document.getElementById('font-sans').classList.toggle('selected', f === 'sans');
+    }
+
+    function setFontSize(val) {
+      fontSize = parseInt(val);
+      document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+      document.getElementById('fontSizeVal').innerText = fontSize + ' px';
+      document.getElementById('fontSizeRange').value = fontSize;
+      localStorage.setItem('pmr_fontSize', fontSize);
+    }
+    function changeFontSize(delta) { setFontSize(Math.min(32, Math.max(16, fontSize + delta))); }
+
+    function setLineHeight(val) {
+      lineHeight = parseFloat(val);
+      document.documentElement.style.setProperty('--line-height', lineHeight);
+      document.getElementById('lineHeightVal').innerText = lineHeight.toFixed(2);
+      localStorage.setItem('pmr_lineHeight', lineHeight);
+    }
+
+    function setWidth(w) {
+      measureWidth = w;
+      document.documentElement.style.setProperty('--measure', w + 'px');
+      localStorage.setItem('pmr_width', w);
+      [620, 720, 840].forEach(val => {
+        document.getElementById(`width-${val}`)?.classList.toggle('selected', val === w);
+      });
+    }
+
+    function setSpeechRate(val) {
+      speechRate = parseFloat(val);
+      document.getElementById('speechRateVal').innerText = speechRate.toFixed(2) + '×';
+    }
+
+    function updateProgressBar() {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.scrollY;
+      const pct = scrollTotal > 0 ? Math.min(100, Math.max(0, (currentScroll / scrollTotal) * 100)) : 0;
+      document.getElementById('progressBar').style.width = pct + '%';
+    }
+
+    window.addEventListener('scroll', updateProgressBar);
+
+    initReader();
+  </script>
+</body>
+</html>

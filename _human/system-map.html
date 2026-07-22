@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>System Map - Psychology Money Reader</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 24px; line-height: 1.6; color: #333; background: #fafafa; }
+    h1 { color: #1877d2; border-bottom: 2px solid #e5e2dc; padding-bottom: 8px; }
+    .card { background: #fff; border: 1px solid #ded1b8; padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    code { background: #eef8f3; padding: 2px 6px; border-radius: 4px; color: #167451; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>🗺️ System Map｜系統架構圖與模組關係</h1>
+  
+  <div class="card">
+    <h2>1. 專案根目錄入口 (Root Executable Entry)</h2>
+    <p><code>index.html</code> - 單檔獨立雙語閱讀器，支援 IndexedDB 離線快取、漸進式載入、PWA 主畫面安裝、全篇搜尋、書籤與 TTS 語音朗讀。</p>
+  </div>
+
+  <div class="card">
+    <h2>2. 資料夾分類架構 (Organized Directory Layout)</h2>
+    <ul>
+      <li><code>source_materials/</code> - 原始書籍與學術論文 JSON / 圖表原始檔案。</li>
+      <li><code>processed_content/</code> - 中英文對照段落內容，採純 Markdown (<code>.md</code>) 格式儲存。</li>
+      <li><code>reader_versions/</code> - 閱讀器版本演進紀錄與可用建置 (包含 <code>v11_latest</code>, <code>v10_pwa_offline</code>, <code>v9_bilingual_figures</code>)。</li>
+      <li><code>_meta/</code> - 擁有者私有與公開可重建藍圖 (<code>owner_private_blueprint.md</code>, <code>public_blueprint.md</code>)。</li>
+      <li><code>_agent/</code> - AI Agent 工作日誌與指令規範。</li>
+      <li><code>_human/</code> - 人工維護層 (系統圖譜與常見問題快速排除)。</li>
+      <li><code>_pending/</code> - 封存資料與待審查暫存區。</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>3. 資料流與部署 (Data Flow & Deployment)</h2>
+    <p>線上網址：<a href="https://yunkumom.github.io/reader/" target="_blank">https://yunkumom.github.io/reader/</a></p>
+    <p>GitHub 倉庫：<a href="https://github.com/Yunkumom/reader" target="_blank">https://github.com/Yunkumom/reader</a></p>
+  </div>
+</body>
+</html>

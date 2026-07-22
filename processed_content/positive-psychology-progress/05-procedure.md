@@ -1,0 +1,187 @@
+# Procedure
+## 研究程序
+
+### Paragraph 1
+
+**[EN]** For our first large RCT, we designed five happiness exercises and one placebo control exercise. Each exercise was delivered via the Internet and could be completed within one week.
+
+**[ZH]** 在第一次大型隨機對照試驗中，我們設計了五項幸福感練習與一項安慰劑對照練習。每項練習皆透過網際網路提供，並可在一週內完成。
+
+---
+
+### Paragraph 2
+
+**[EN]** One of these exercises focused on building gratitude, two focused on increasing awareness of what is most positive about oneself, and two focused on identifying strengths of character. In a randomized, placebo-controlled study, we compared the effects of these exercises with those of what we thought would be a plausible placebo control: journaling for one week about early memories.
+
+**[ZH]** 其中一項練習著重於培養感恩，兩項著重於增進對自身最正向特質的覺察，另兩項則著重於辨識品格優勢。在這項隨機、安慰劑對照研究中，我們將這些練習的效果，與一項我們認為合理的安慰劑對照活動相比：連續一週書寫早期記憶日誌。
+
+---
+
+### Paragraph 3
+
+**[EN]** We followed our participants for six months, periodically measuring symptoms of both depression and happiness.
+
+**[ZH]** 我們追蹤參與者六個月，並定期測量其憂鬱症狀與幸福感。
+
+---
+
+### Paragraph 4
+
+**[EN]** We recruited a convenience sample from among visitors to the website created for Seligman's (2002) book Authentic Happiness by creating a link called "Happiness Exercises." The study was described on the site as an opportunity to help test new exercises designed to increase happiness.
+
+**[ZH]** 我們在為 Seligman（2002）的《Authentic Happiness》（《真實的快樂》）所建立的網站中設置「幸福感練習」連結，並從網站訪客中招募便利樣本。網站將本研究描述為一個協助測試新型幸福感提升練習的機會。
+
+---
+
+### Paragraph 5
+
+**[EN]** Over the course of approximately one month, we recruited 577 adult participants, 42% male and 58% female. Almost 2/3 of the participants (64%) were between the ages of 35 and 54.
+
+**[ZH]** 在約一個月期間，我們共招募 577 名成年參與者，其中男性占 42%，女性占 58%。近三分之二的參與者（64%）年齡介於 35 至 54 歲。
+
+---
+
+### Paragraph 6
+
+**[EN]** Of the participants surveyed, 39% had a degree from a four-year college and 27% had some graduate school education. Notably, only 4% of the participants did not have education or vocational training after high school, another limit on the generalizability of our findings.
+
+**[ZH]** 在受調查的參與者中，39% 擁有四年制大學學位，27% 曾接受研究所教育。值得注意的是，僅有 4% 的參與者在高中畢業後未曾接受進一步教育或職業訓練，這也限制了本研究結果的可推廣性。
+
+---
+
+### Paragraph 7
+
+**[EN]** Consistent with their reported level of education, approximately 3/4 of the participants classified their income level as "average" or above. The sample was largely white (77%).
+
+**[ZH]** 與其自陳教育程度一致，約四分之三的參與者將自己的收入水準歸類為「平均」或以上。樣本主要為白人（77%）。
+
+---
+
+### Paragraph 8
+
+**[EN]** Visitors were told that the exercise they were to receive was not guaranteed to make them happier and that they might receive an inert (placebo) exercise. We did not offer any initial financial incentives for doing the exercises.
+
+**[ZH]** 網站訪客被告知，他們將接受的練習不保證能使其更幸福，而且可能分派到無實質作用的安慰劑練習。我們一開始並未為完成練習提供任何金錢誘因。
+
+---
+
+### Paragraph 9
+
+**[EN]** In order to insure good follow-up, we did tell participants, however, that upon completion of follow-up tests at one week, one month, three months, and 6 months after completing the exercise, they would be entered into a lottery. The lottery prizes included one $500 award and three $100 awards.
+
+**[ZH]** 不過，為確保良好的追蹤率，我們告知參與者，在完成練習後一週、一個月、三個月與六個月的追蹤測驗後，即可參加抽獎。獎項包括一份 500 美元獎金與三份各 100 美元獎金。
+
+---
+
+### Paragraph 10
+
+**[EN]** After participants agreed to the terms presented, they answered a series of basic demographic questions and completed two questionnaires: the SHI and CES-D as already described. Then participants received a randomly assigned exercise.
+
+**[ZH]** 參與者同意所列條款後，先回答一系列基本人口統計問題，並完成前述兩份問卷：SHI 與 CES-D。接著，參與者會隨機獲派一項練習。
+
+---
+
+### Paragraph 11
+
+**[EN]** Participants were encouraged to print out or write down the instructions for their exercise and keep them accessible during the week to come. They were instructed to return to the website to complete follow-up questionnaires after completing their assigned exercise.
+
+**[ZH]** 研究人員鼓勵參與者印出或抄下練習說明，並在接下來一週將其放在方便取用之處。完成指定練習後，他們須返回網站填寫追蹤問卷。
+
+---
+
+### Paragraph 12
+
+**[EN]** Participants received reminder e-mails. The first reminder, sent early in the week, repeated the instructions for their assigned exercise.
+
+**[ZH]** 參與者會收到電子郵件提醒。第一封提醒信於該週初寄出，內容重述其指定練習的操作說明。
+
+---
+
+### Paragraph 13
+
+**[EN]** They were also given contact information and encouraged to contact the researchers with any questions or concerns. The second reminder e-mail, sent later in the week, reminded participants to return to the website for the follow-up questionnaires: "Thank you again for participating in our study. Please remember to return to [url] by [relevant date] to give us feedback about your exercise and complete follow-up questionnaires."
+
+**[ZH]** 他們也會收到聯絡資訊，若有任何問題或疑慮，可與研究人員聯繫。第二封提醒信於該週稍晚寄出，提醒參與者返回網站填寫追蹤問卷：「再次感謝您參與本研究。請記得於［相關日期］前返回［網址］，提供您對練習的回饋並完成追蹤問卷。」
+
+---
+
+### Paragraph 14
+
+**[EN]** When participants returned to the website after their exercise, they completed the same measures of happiness and depression administered at pre-test. In addition, participants answered a "manipulation check" question to assess whether they had in fact completed the exercise as instructed during the relevant time period (scored yes or no).
+
+**[ZH]** 參與者完成練習並返回網站後，會再次完成前測時使用的相同幸福感與憂鬱測量。此外，參與者還須回答一項「操弄檢核」問題，以評估其是否確實在指定期間內依照說明完成練習（以是或否計分）。
+
+---
+
+### Paragraph 15
+
+**[EN]** Of the 577 participants who completed baseline questionnaires, 411 (71%) completed all five follow-up assessments. Participants who dropped out of the study did not differ from those who remained on their baseline happiness or depression scores, nor was there differential dropout from the six exercises.
+
+**[ZH]** 在完成基線問卷的 577 名參與者中，有 411 人（71%）完成全部五次追蹤評估。中途退出研究者與持續參與者在基線幸福感或憂鬱分數上並無差異，六項練習的退出率也沒有顯著差異。
+
+---
+
+### Paragraph 16
+
+**[EN]** We include in our analyses only those participants who completed all follow-up questionnaires¹.
+
+**[ZH]** 我們的分析僅納入完成所有追蹤問卷的參與者¹。
+
+---
+
+### Paragraph 17
+
+**[EN]** Detailed descriptions of the exercises are available upon request, but here are overviews of each:
+
+**[ZH]** 如有需要可索取各項練習的詳細說明；以下為每項練習的概述：
+
+---
+
+### Paragraph 18
+
+**[EN]** - Placebo control exercise: early memories — Participants were asked to write about their early memories every night for one week.
+
+**[ZH]** - 安慰劑對照練習：早期記憶——參與者須連續一週每晚書寫自己的早期記憶。
+
+---
+
+### Paragraph 19
+
+**[EN]** - Gratitude visit — Participants were given one week to write and then deliver a letter of gratitude in person to someone who had been especially kind to them but had never been properly thanked.
+
+**[ZH]** - 感恩拜訪——參與者有一週時間撰寫感謝信，之後親自交給一位曾對自己格外友善、卻從未得到妥善致謝的人。
+
+---
+
+### Paragraph 20
+
+**[EN]** - Three good things in life — Participants were asked to write down three things that went well each day and their causes every night for one week. In addition they were asked to provide a causal explanation for each good thing.
+
+**[ZH]** - 生活中的三件好事——參與者須連續一週每晚寫下當天進行順利的三件事及其原因。此外，他們還須為每件好事提供因果解釋。
+
+---
+
+### Paragraph 21
+
+**[EN]** - You at your best — Participants were asked to write about a time when they were at their best and then to reflect on the personal strengths displayed in the story. They were told to review their story once every day for a week and to reflect on the strengths they had identified.
+
+**[ZH]** - 最佳狀態下的你——參與者須書寫一段自己處於最佳狀態的經歷，接著反思故事中展現的個人優勢。他們須連續一週每天重讀故事一次，並反思自己所辨識出的優勢。
+
+---
+
+### Paragraph 22
+
+**[EN]** - Using signature strengths in a new way — Participants were asked to take our inventory of character strengths online at www.authenichappiness.org and receive individualized feedback about their top five ("signature") strengths (Peterson, Park, & Seligman, 2005). They were then asked to use one of these top strengths in a new and different way every day for one week.
+
+**[ZH]** - 以新方式運用標誌性優勢——參與者須在 www.authenichappiness.org 線上完成我們的品格優勢量表，並取得針對其排名前五項（「標誌性」）優勢的個人化回饋（Peterson, Park, & Seligman, 2005）。接著，他們須連續一週每天以嶄新且不同的方式運用其中一項優勢。
+
+---
+
+### Paragraph 23
+
+**[EN]** - Identifying signature strengths — This exercise was a truncated version of the one just described without the instruction to use signature strengths in new ways. Participants were asked to take the survey, to note their five highest strengths, and to use them more often during the next week.
+
+**[ZH]** - 辨識標誌性優勢——這是前述練習的精簡版本，但未要求參與者以新方式運用標誌性優勢。參與者須完成問卷、記下排名最高的五項優勢，並在接下來一週更常運用這些優勢。
+
+---
+
